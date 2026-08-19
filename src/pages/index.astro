@@ -1,5 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { committees } from '../data/committees';
+
+const deckImages = [
+  '/gallery/delegates.jpg', '/gallery/flags-debate.jpg', '/gallery/moderator.jpg', '/gallery/flags-room.jpg',
+  '/gallery/auditorium.jpg', '/gallery/delegates.jpg', '/gallery/flags-debate.jpg', '/gallery/flags-room.jpg',
+  '/gallery/moderator.jpg', '/gallery/auditorium.jpg', '/gallery/delegates.jpg',
+];
+const deckCards = committees.filter((committee) => !committee.confidential).map((committee, index) => ({ committee, image: deckImages[index] }));
+const deckPositions = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven'];
 ---
 
 <Layout title="OAKMUN BLR 26 — Ideas Too Bright To Be Silenced">
@@ -11,6 +20,13 @@ import Layout from '../layouts/Layout.astro';
         <span class="geometry-ring"></span>
         <span class="geometry-dot geometry-dot--one"></span>
         <span class="geometry-dot geometry-dot--two"></span>
+      </div>
+      <div class="intro-montage" aria-hidden="true">
+        <img class="intro-montage__frame intro-montage__frame--one" src="/intro/debate-room.jpg" alt="" />
+        <img class="intro-montage__frame intro-montage__frame--two" src="/intro/gavel.jpg" alt="" />
+        <img class="intro-montage__frame intro-montage__frame--three" src="/intro/placards.jpg" alt="" />
+        <img class="intro-montage__frame intro-montage__frame--four" src="/intro/delegates.jpg" alt="" />
+        <img class="intro-montage__frame intro-montage__frame--five" src="/intro/arrival.jpg" alt="" />
       </div>
       <img class="oakmun-mark" src="/oakmun-mark.svg" alt="OAKMUN emblem" />
       <p class="edition-mark">OAKMUN<br /><span>26</span></p>
@@ -30,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
       <section class="home-screen" aria-label="OAKMUN 2026 homepage">
         <header class="home-nav">
           <a class="home-brand" href="#top"><img src="/oakmun-mark.svg" alt="OAKMUN emblem" /><span>OAKMUN<br />BLR 26</span></a>
-          <nav class="home-links" aria-label="Main navigation"><a href="#committees">Committees</a><a href="#schedule">Schedule</a><a href="#resources">Resources</a><a href="#faq">FAQ</a></nav>
+          <nav class="home-links" aria-label="Main navigation"><a href="/committees">Committees</a><a href="#schedule">Schedule</a><a href="#resources">Resources</a><a href="#faq">FAQ</a></nav>
           <a class="home-register" href="#register">Register <span>↗</span></a>
         </header>
         <main class="conference-hero" id="top">
@@ -38,18 +54,12 @@ import Layout from '../layouts/Layout.astro';
             <p>🇮🇳&nbsp; 🇺🇳&nbsp; 🇿🇦&nbsp; 🇧🇷&nbsp; 🇯🇵&nbsp; 🇫🇷&nbsp; 🇩🇪&nbsp; 🇲🇽&nbsp; 🇰🇪&nbsp; 🇨🇦&nbsp; 🇰🇷&nbsp; 🇦🇺&nbsp; 🇪🇬&nbsp; 🇮🇩&nbsp; 🇦🇷&nbsp; 🇳🇬&nbsp; 🇹🇭&nbsp; 🇹🇷</p>
             <p>🇮🇳&nbsp; 🇺🇳&nbsp; 🇿🇦&nbsp; 🇧🇷&nbsp; 🇯🇵&nbsp; 🇫🇷&nbsp; 🇩🇪&nbsp; 🇲🇽&nbsp; 🇰🇪&nbsp; 🇨🇦&nbsp; 🇰🇷&nbsp; 🇦🇺&nbsp; 🇪🇬&nbsp; 🇮🇩&nbsp; 🇦🇷&nbsp; 🇳🇬&nbsp; 🇹🇭&nbsp; 🇹🇷</p>
           </div>
-          <div class="committee-deck" aria-label="Committee image placeholders">
-            <article class="deck-card deck-card--one"><img class="deck-card__photo" src="/gallery/delegates.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>GENERAL ASSEMBLY</span><strong>SPECPOL</strong></article>
-            <article class="deck-card deck-card--two"><img class="deck-card__photo" src="/gallery/flags-debate.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>GENERAL ASSEMBLY</span><strong>UNGA</strong></article>
-            <article class="deck-card deck-card--three"><img class="deck-card__photo" src="/gallery/moderator.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>GENERAL ASSEMBLY</span><strong>UNHRC</strong></article>
-            <article class="deck-card deck-card--four"><img class="deck-card__photo" src="/gallery/flags-room.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>SEMI-CRISIS</span><strong>H-UNSC</strong></article>
-            <article class="deck-card deck-card--five"><img class="deck-card__photo" src="/gallery/auditorium.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>GENERAL ASSEMBLY</span><strong>DISEC</strong></article>
-            <article class="deck-card deck-card--six"><img class="deck-card__photo" src="/gallery/delegates.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>SPECIALIZED</span><strong>FATF</strong></article>
-            <article class="deck-card deck-card--seven"><img class="deck-card__photo" src="/gallery/flags-debate.jpg" alt="" /><img src="/oakmun-mark.svg" alt="" /><span>SPECIALIZED</span><strong>INTERPOL</strong></article>
+          <div class="committee-deck" aria-label="OAKMUN committees">
+            {deckCards.map(({ committee, image }, cardIndex) => <article class={`deck-card deck-card--${deckPositions[cardIndex]}`}><img class="deck-card__photo" src={image} alt="" /><img src="/oakmun-mark.svg" alt="" /><span>{committee.category.toUpperCase()}</span><strong>{committee.code}</strong></article>)}
           </div>
           <aside class="conference-notices" aria-label="Conference updates">
             <a href="#register" class="conference-notice"><small>REGISTRATION</small><strong>Delegate applications</strong><b>→</b></a>
-            <a href="#committees" class="conference-notice"><small>COMING SOON</small><strong>Committee catalogue</strong><b>→</b></a>
+            <a href="/committees" class="conference-notice"><small>EXPLORE</small><strong>Committee catalogue</strong><b>→</b></a>
             <a href="#resources" class="conference-notice"><small>COMING SOON</small><strong>Conference resources</strong><b>→</b></a>
           </aside>
           <div class="conference-centre">
@@ -57,7 +67,7 @@ import Layout from '../layouts/Layout.astro';
             <p class="conference-centre__eyebrow">OAKMUN BLR 26 &nbsp;·&nbsp; BENGALURU, INDIA</p>
             <h1>OAKMUN<br /><span>BLR 26</span></h1>
             <p class="conference-centre__dates">DATES TO BE ANNOUNCED</p>
-            <div class="conference-centre__actions"><a href="#register">Register <span>→</span></a><a href="#committees">Explore committees</a></div>
+            <div class="conference-centre__actions"><a href="#register">Register <span>→</span></a><a href="/committees">Explore committees</a></div>
             <div class="countdown-placeholder"><span><b>--</b>DAYS</span><i>:</i><span><b>--</b>HOURS</span><i>:</i><span><b>--</b>MINS</span><i>:</i><span><b>--</b>SECS</span></div>
           </div>
           <div class="conference-visual" aria-hidden="true"><span class="conference-visual__line"></span><span class="conference-visual__ring"></span><span class="conference-visual__node"></span></div>
@@ -66,18 +76,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="committee-sticky">
             <header class="section-head"><span>01</span><h2>COMMITTEES</h2><p>SCROLL TO EXPLORE ALL 12</p></header>
             <div class="committee-grid">
-            <article class="committee-card"><div class="committee-card__media"><span>01</span>SPECPOL</div><p>SPECPOL</p><small>GENERAL ASSEMBLY · SINGLE DELEGATE · 40</small><h3>The Question of Western Sahara</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>02</span>UNGA</div><p>UNGA</p><small>GENERAL ASSEMBLY · SINGLE DELEGATE · 50</small><h3>The Principle of Self-Defence under Article 51 of the United Nations Charter</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>03</span>UNHRC</div><p>UNHRC</p><small>GENERAL ASSEMBLY · SINGLE DELEGATE · 50</small><h3>Agenda to be announced</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>04</span>H-UNSC</div><p>H-UNSC</p><small>SEMI-CRISIS · DOUBLE DELEGATE · 40</small><h3>The Yom Kippur War, 1973</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>05</span>DISEC</div><p>DISEC</p><small>GENERAL ASSEMBLY · SINGLE DELEGATE · 40</small><h3>The Regulation of Anti-Satellite Weapons</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>06</span>FATF</div><p>FATF</p><small>SPECIALIZED · SINGLE DELEGATE · 35</small><h3>Financial Crime Risks of Alternative Cross-Border Payment Systems</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>07</span>INTERPOL</div><p>INTERPOL</p><small>SPECIALIZED · SINGLE DELEGATE · 35</small><h3>Operation Shadow Storm</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>08</span>LOK SABHA</div><p>Lok Sabha</p><small>INDIAN PARLIAMENT · SINGLE DELEGATE · 35</small><h3>Reviewing the Implementation of the National Education Policy, 2020</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>09</span>IPC</div><p>IPC</p><small>PRESS · SINGLE DELEGATE · 20</small><h3>Press Freedom and the Protection of Journalists in Armed Conflict Zones</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>10</span>JCC</div><p>Alea Iacta Est</p><small>JCC · SINGLE DELEGATE · 40</small><h3>Caesar Crosses the Rubicon</h3></article>
-            <article class="committee-card committee-card--confidential"><div class="committee-card__media"><span>11</span>COMMITTEE X</div><p>Committee X</p><small>CONFIDENTIAL</small><h3>Details to be disclosed</h3></article>
-            <article class="committee-card"><div class="committee-card__media"><span>12</span>US SENATE</div><p>US Senate</p><small>REGIONAL LEGISLATURE · SINGLE DELEGATE · 25</small><h3>U.S. Policy toward Greenland</h3></article>
+            {committees.map((committee) => <a class:list={['committee-card', { 'committee-card--confidential': committee.confidential }]} href={`/committees#${committee.id}`} aria-label={`View ${committee.name}`}><div class="committee-card__media"><img src={committee.image} alt="" loading="lazy" /><span>{String(committee.index).padStart(2, '0')}</span></div><p>{committee.name}</p>{committee.confidential ? <><small>CLASSIFIED</small><h3>Details will be disclosed at the appropriate time.</h3></> : <><small>{committee.category} · {committee.format} · {committee.size}</small><h3>{committee.shortAgenda}</h3></>}<b>VIEW COMMITTEE →</b></a>)}
             </div>
           </div>
         </section>
@@ -95,7 +94,7 @@ import Layout from '../layouts/Layout.astro';
         </section>
         <section class="event-section event-section--updates reveal" id="updates">
           <header class="section-head"><span>03</span><h2>UPDATES</h2></header>
-          <div class="update-list"><a href="#register"><span>01</span><p>REGISTRATION</p><b>↗</b></a><a href="#committees"><span>02</span><p>COMMITTEES</p><b>↗</b></a><a href="#top"><span>03</span><p>OAKMUN BLR 26</p><b>↗</b></a></div>
+          <div class="update-list"><a href="#register"><span>01</span><p>REGISTRATION</p><b>↗</b></a><a href="/committees"><span>02</span><p>COMMITTEES</p><b>↗</b></a><a href="#top"><span>03</span><p>OAKMUN BLR 26</p><b>↗</b></a></div>
         </section>
         <section class="event-section event-section--faq reveal" id="faq">
           <header class="section-head"><span>05</span><h2>FAQ</h2></header>
@@ -121,6 +120,7 @@ import Layout from '../layouts/Layout.astro';
     document.querySelectorAll('.reveal').forEach((section) => observer.observe(section));
 
     const home = document.querySelector('.home-screen');
+    const committeeDeck = document.querySelector('.committee-deck');
     const committeeSection = document.querySelector('.event-section--committees');
     const committeeTrack = document.querySelector('.committee-grid');
     const committeeViewport = document.querySelector('.committee-sticky');
@@ -137,8 +137,17 @@ import Layout from '../layouts/Layout.astro';
       const distance = Math.max(0, committeeTrack.scrollWidth - committeeViewport.clientWidth);
       committeeTrack.style.transform = `translateX(${-distance * progress}px)`;
     };
-    requestAnimationFrame(() => { setCommitteeScrollRange(); syncCommitteeScroll(); });
-    home?.addEventListener('scroll', syncCommitteeScroll, { passive: true });
-    window.addEventListener('resize', () => { setCommitteeScrollRange(); syncCommitteeScroll(); });
+    const syncDeckReveal = () => {
+      if (!home || !committeeDeck) return;
+      const revealStage = Math.min(4, Math.floor(home.scrollTop / Math.max(1, home.clientHeight * .16)));
+      committeeDeck.classList.toggle('committee-deck--scrolling', revealStage >= 1);
+      committeeDeck.classList.toggle('committee-deck--reveal-eight', revealStage >= 1);
+      committeeDeck.classList.toggle('committee-deck--reveal-nine', revealStage >= 2);
+      committeeDeck.classList.toggle('committee-deck--reveal-ten', revealStage >= 3);
+      committeeDeck.classList.toggle('committee-deck--reveal-eleven', revealStage >= 4);
+    };
+    requestAnimationFrame(() => { setCommitteeScrollRange(); syncCommitteeScroll(); syncDeckReveal(); });
+    home?.addEventListener('scroll', () => { syncCommitteeScroll(); syncDeckReveal(); }, { passive: true });
+    window.addEventListener('resize', () => { setCommitteeScrollRange(); syncCommitteeScroll(); syncDeckReveal(); });
   </script>
 </Layout>

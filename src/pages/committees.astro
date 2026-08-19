@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { committees } from '../data/committees';
+---
+
+<Layout title="Committees — OAKMUN BLR 26">
+  <main class="committee-catalogue">
+    <header class="catalogue-nav">
+      <a class="home-brand" href="/"><img src="/oakmun-mark.svg" alt="OAKMUN emblem" /><span>OAKMUN<br />BLR 26</span></a>
+      <a class="catalogue-nav__back" href="/">← Home</a>
+    </header>
+    <section class="catalogue-hero">
+      <p>OAKMUN BLR 26 · BENGALURU, INDIA · 2026</p>
+      <div class="catalogue-hero__title"><span>THE</span><h1>COMMITTEE<br />ARCHIVE</h1></div>
+      <div class="catalogue-hero__footer"><span>12 ROOMS · ONE CONVERSATION</span><p>SELECT A CHAMBER TO VIEW ITS FINAL AGENDA</p></div>
+    </section>
+    <section class="catalogue-grid" aria-label="OAKMUN committees">
+      {committees.map((committee) => (
+        <button id={committee.id} class:list={['catalogue-card', `catalogue-card--${committee.index}`, { 'catalogue-card--confidential': committee.confidential }]} type="button" data-committee-card data-confidential={committee.confidential ? 'true' : 'false'} data-name={committee.name} data-category={committee.category} data-format={committee.format} data-size={committee.size} data-agenda={committee.agenda} data-image={committee.image}>
+          <img src={committee.image} alt="" loading="lazy" />
+          <span>{String(committee.index).padStart(2, '0')}</span>
+          {committee.confidential ? <div><small>Classified committee</small><h2>Committee X</h2><p>Details will be disclosed at the appropriate time.</p><b>Restricted dossier <i>↗</i></b></div> : <div><small>{committee.category} · {committee.format}</small><h2>{committee.name}</h2><p>{committee.shortAgenda}</p><b>Open dossier <i>↗</i></b></div>}
+        </button>
+      ))}
+    </section>
+  </main>
+
+  <dialog class="committee-dialog" aria-labelledby="dialog-title">
+    <button class="committee-dialog__close" type="button" aria-label="Close committee details">×</button>
+    <img class="committee-dialog__image" src="" alt="" />
+    <div class="committee-dialog__body">
+      <p class="committee-dialog__meta"></p>
+      <h2 id="dialog-title"></h2>
+      <p class="committee-dialog__agenda"></p>
+      <span class="committee-dialog__label">OAKMUN BLR 26 · FINAL AGENDA</span>
+      <a class="committee-dialog__guide" href="#" aria-disabled="true">Background guide <span>Coming soon</span></a>
+    </div>
+  </dialog>
+
+  <script>
+    const dialog = document.querySelector<HTMLDialogElement>('.committee-dialog');
+    const closeButton = dialog?.querySelector<HTMLButtonElement>('.committee-dialog__close');
+    const image = dialog?.querySelector<HTMLImageElement>('.committee-dialog__image');
+    const title = dialog?.querySelector<HTMLHeadingElement>('#dialog-title');
+    const meta = dialog?.querySelector<HTMLElement>('.committee-dialog__meta');
+    const agenda = dialog?.querySelector<HTMLElement>('.committee-dialog__agenda');
+    const label = dialog?.querySelector<HTMLElement>('.committee-dialog__label');
+    const guide = dialog?.querySelector<HTMLElement>('.committee-dialog__guide');
+    document.querySelectorAll<HTMLButtonElement>('[data-committee-card]').forEach((card) => {
+      card.addEventListener('click', () => {
+        if (!dialog || !image || !title || !meta || !agenda || !label || !guide) return;
+        image.src = card.dataset.image || '';
+        title.textContent = card.dataset.name || '';
+        const classified = card.dataset.confidential === 'true';
+        meta.textContent = classified ? 'CLASSIFIED COMMITTEE' : `${card.dataset.category} · ${card.dataset.format} · ${card.dataset.size} delegates`;
+        agenda.textContent = classified ? 'This committee’s details remain undisclosed.' : card.dataset.agenda || '';
+        label.textContent = classified ? 'OAKMUN BLR 26 · RESTRICTED ACCESS' : 'OAKMUN BLR 26 · FINAL AGENDA';
+        guide.hidden = classified;
+        dialog.showModal();
+      });
+    });
+    closeButton?.addEventListener('click', () => dialog?.close());
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+  </script>
+</Layout>

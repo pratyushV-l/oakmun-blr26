@@ -25,7 +25,8 @@ export const committees: Committee[] = [
   },
   {
     id: 'unhrc', index: 3, code: 'UNHRC', name: 'United Nations Human Rights Council', category: 'General Assembly', format: 'Single Delegate', size: 50,
-    agenda: 'Agenda to be announced', shortAgenda: 'Agenda to be announced', image: '/committees/unhrc.png',
+    agenda: 'The Protection of Journalists under International Humanitarian Law',
+    shortAgenda: 'The Protection of Journalists', image: '/committees/unhrc.png',
   },
   {
     id: 'h-unsc', index: 4, code: 'H-UNSC', name: 'Historical United Nations Security Council', category: 'Semi-Crisis', format: 'Double Delegate', size: 40,
@@ -39,7 +40,7 @@ export const committees: Committee[] = [
   },
   {
     id: 'fatf', index: 6, code: 'FATF', name: 'Financial Action Task Force', category: 'Specialized Committee', format: 'Single Delegate', size: 35,
-    agenda: 'The Financial Crime Risks of Alternative Cross-Border Payment Systems amid De-Dollarization',
+    agenda: 'The Financial Crime Risks of Alternative Cross-Border Payment Systems amid De-Dollarization (FATF)',
     shortAgenda: 'Financial Crime & De-Dollarization', image: '/committees/fatf.png',
   },
   {
@@ -63,12 +64,12 @@ export const committees: Committee[] = [
     shortAgenda: 'Caesar Crosses the Rubicon', image: '/committees/jcc-rubicon.png',
   },
   {
-    id: 'committee-x', index: 11, code: 'COMMITTEE X', name: 'Committee X', category: 'HCC', format: 'CONFIDENTIAL', size: 30,
-    agenda: 'Details to be disclosed.', shortAgenda: 'Details to be disclosed', image: '/committees/committee-x.png', confidential: true,
+    id: 'committee-x', index: 11, code: 'COMMITTEE X', name: 'Committee X', category: '', format: '', size: 0,
+    agenda: '', shortAgenda: '', image: '/committees/committee-x.png', confidential: true,
   },
   {
     id: 'us-senate', index: 12, code: 'US SENATE', name: 'United States Senate', category: 'Regional Legislature', format: 'Single Delegate', size: 25,
-    agenda: 'U.S. Policy toward Greenland: Arctic Security, Greenlandic Self-Determination, and the Future of U.S.-Danish Relations',
+    agenda: 'U.S. Policy toward Greenland: Arctic Security, Greenlandic Self-Determination, and the Future of U.S.-Danish Relations (commonslibrary.parliament.uk)',
     shortAgenda: 'U.S. Policy toward Greenland', image: '/committees/us-senate.png',
   },
 ];
