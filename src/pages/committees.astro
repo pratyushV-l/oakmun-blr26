@@ -4,26 +4,62 @@ import { committees } from '../data/committees';
 ---
 
 <Layout title="Committees — OAKMUN BLR 26">
-  <main class="committee-catalogue">
-    <header class="catalogue-nav">
-      <a class="home-brand" href="/"><img src="/oakmun-mark.svg" alt="OAKMUN emblem" /><span>OAKMUN<br />BLR 26</span></a>
-      <a class="catalogue-nav__back" href="/">← Home</a>
-    </header>
-    <section class="catalogue-hero">
-      <p>OAKMUN BLR 26 · BENGALURU, INDIA · 2026</p>
-      <div class="catalogue-hero__title"><span>THE</span><h1>COMMITTEE<br />ARCHIVE</h1></div>
-      <div class="catalogue-hero__footer"><span>12 ROOMS · ONE CONVERSATION</span><p>SELECT A CHAMBER TO VIEW ITS FINAL AGENDA</p></div>
-    </section>
-    <section class="catalogue-grid" aria-label="OAKMUN committees">
+  <div class="reference-page">
+    <div class="reference-page__ambient" aria-hidden="true"></div>
+    <main class="reference-main">
+      <header class="catalogue-nav reference-catalogue-nav">
+        <a class="home-brand" href="/"><img src="/oakmun-mark.svg" alt="OAKMUN emblem" /><span>OAKMUN<br />BLR 26</span></a>
+        <a class="catalogue-nav__back" href="/">← Home</a>
+      </header>
+      <section class="reference-hero">
+        <div class="reference-hero__orb reference-hero__orb--a"></div><div class="reference-hero__orb reference-hero__orb--b"></div>
+        <div class="reference-hero__content">
+          <p class="reference-hero__eyebrow">OAKMUN BLR 26 · BENGALURU, INDIA</p>
+          <h1>Committees</h1>
+          <p class="reference-hero__sub">Find your forum, explore its agenda, and prepare to shape the conversation.</p>
+        </div>
+      </section>
+
+      <section class="reference-filters" aria-label="Filter committees">
+        <div class="reference-filters__inner">
+          <span>Explore by</span>
+          <div class="reference-filter-tags">
+            <button class="reference-filter active" type="button" data-filter="all">All</button>
+            <button class="reference-filter" type="button" data-filter="General Assembly">General Assembly</button>
+            <button class="reference-filter" type="button" data-filter="Specialized Committee">Specialized</button>
+            <button class="reference-filter" type="button" data-filter="Semi-Crisis">Crisis</button>
+          </div>
+          <label class="reference-search"><span class="sr-only">Search committees</span><input type="search" placeholder="Search committees" data-committee-search /></label>
+        </div>
+      </section>
+
+      <section class="reference-grid-shell" aria-label="OAKMUN committees">
+        <div class="reference-committee-grid">
       {committees.map((committee) => (
-        <button id={committee.id} class:list={['catalogue-card', `catalogue-card--${committee.index}`, { 'catalogue-card--confidential': committee.confidential }]} type="button" data-committee-card data-confidential={committee.confidential ? 'true' : 'false'} data-name={committee.name} data-category={committee.category} data-format={committee.format} data-size={committee.size} data-agenda={committee.agenda} data-image={committee.image}>
-          <img src={committee.image} alt="" loading="lazy" />
-          <span>{String(committee.index).padStart(2, '0')}</span>
-          {committee.confidential ? <div><small>Classified committee</small><h2>Committee X</h2><p>Details will be disclosed at the appropriate time.</p><b>Restricted dossier <i>↗</i></b></div> : <div><small>{committee.category} · {committee.format}</small><h2>{committee.name}</h2><p>{committee.shortAgenda}</p><b>Open dossier <i>↗</i></b></div>}
+        <button id={committee.id} class:list={['reference-committee-card', { 'reference-committee-card--confidential': committee.confidential }]} type="button" data-committee-card data-confidential={committee.confidential ? 'true' : 'false'} data-name={committee.name} data-category={committee.category} data-format={committee.format} data-size={committee.size} data-agenda={committee.agenda} data-image={committee.image}>
+          <div class="reference-committee-card__visual">
+            <img src={committee.image} alt="" loading="lazy" />
+            <span class="reference-committee-card__number">{String(committee.index).padStart(2, '0')}</span>
+            <strong class:list={{ long: committee.code.length > 9 }}>{committee.confidential ? 'CLASSIFIED' : committee.code}</strong>
+            {!committee.confidential && <span class="reference-committee-card__badge">View agenda</span>}
+          </div>
+          {committee.confidential ? <div class="reference-committee-card__copy"><h2>Committee X</h2><p>Details will be disclosed at the appropriate time.</p></div> : <div class="reference-committee-card__copy"><h2>{committee.name}</h2><p>{committee.shortAgenda}</p></div>}
         </button>
       ))}
-    </section>
-  </main>
+        </div>
+        <p class="reference-empty" data-committee-empty hidden>No committees match that search.</p>
+      </section>
+    </main>
+
+    <footer class="reference-footer">
+      <div class="reference-footer__top">
+        <div><img src="/oakmun-mark.svg" alt="" /><p class="reference-footer__brand">OAKMUN BLR 26</p><p>Where global perspectives meet purposeful debate.</p></div>
+        <div><h2>Explore</h2><a href="/committees">Committees</a><a href="/#schedule">Schedule</a><a href="/#resources">Resources</a></div>
+        <div><h2>Contact</h2><a href="mailto:mun@oakridge.in">mun@oakridge.in</a><p>Bengaluru, India</p></div>
+      </div>
+      <div class="reference-footer__bottom"><span>© 2026 OAKMUN BLR</span><a href="/">Return home ↑</a></div>
+    </footer>
+  </div>
 
   <dialog class="committee-dialog" aria-labelledby="dialog-title">
     <button class="committee-dialog__close" type="button" aria-label="Close committee details">×</button>
@@ -46,6 +82,29 @@ import { committees } from '../data/committees';
     const agenda = dialog?.querySelector<HTMLElement>('.committee-dialog__agenda');
     const label = dialog?.querySelector<HTMLElement>('.committee-dialog__label');
     const guide = dialog?.querySelector<HTMLElement>('.committee-dialog__guide');
+    const search = document.querySelector<HTMLInputElement>('[data-committee-search]');
+    const empty = document.querySelector<HTMLElement>('[data-committee-empty]');
+    const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    let activeFilter = 'all';
+    const updateCards = () => {
+      const term = search?.value.toLowerCase().trim() || '';
+      let visible = 0;
+      document.querySelectorAll<HTMLButtonElement>('[data-committee-card]').forEach((card) => {
+        const category = card.dataset.category || '';
+        const matchesFilter = activeFilter === 'all' || category === activeFilter;
+        const haystack = `${card.dataset.name} ${category} ${card.dataset.agenda}`.toLowerCase();
+        const matchesSearch = !term || haystack.includes(term);
+        card.hidden = !matchesFilter || !matchesSearch;
+        if (!card.hidden) visible++;
+      });
+      if (empty) empty.hidden = visible > 0;
+    };
+    search?.addEventListener('input', updateCards);
+    filters.forEach((filter) => filter.addEventListener('click', () => {
+      activeFilter = filter.dataset.filter || 'all';
+      filters.forEach((item) => item.classList.toggle('active', item === filter));
+      updateCards();
+    }));
     document.querySelectorAll<HTMLButtonElement>('[data-committee-card]').forEach((card) => {
       card.addEventListener('click', () => {
         if (!dialog || !image || !title || !meta || !agenda || !label || !guide) return;
