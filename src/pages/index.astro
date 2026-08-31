@@ -218,13 +218,12 @@ const introAssets = [
         <h2 data-split data-reveal="fade">LETTERS FROM THE SECRETARIAT</h2>
       </header>
 
-      {letters.map((letter, index) => (
+      {letters.map((letter) => (
         <article class="letter" id={letter.id}>
           <div class="letter__aside">
             <figure class="letter__portrait" data-reveal="mask-up">
               <img src={letter.portrait} alt={`${letter.name}, ${letter.role}`} loading="lazy" width="1000" height="1500" />
               <figcaption>
-                <span class="u-index">{String(index + 1).padStart(2, '0')}</span>
                 <strong>{letter.name}</strong>
                 <small>{letter.signOff}</small>
               </figcaption>
@@ -238,6 +237,12 @@ const introAssets = [
           </div>
         </article>
       ))}
+
+      <div class="letters-skip" data-letters-skip>
+        <a href="#schedule" aria-label="Skip the letters and jump to the schedule">
+          Skip <span aria-hidden="true">↓</span>
+        </a>
+      </div>
     </section>
 
     <!-- 03 SCHEDULE -->
@@ -342,5 +347,20 @@ const introAssets = [
     initIntro(intro, intro?.dataset.assets?.split(',') ?? []);
     initNav(document.getElementById('nav'));
     initMotion(document);
+
+    /* SKIP LETTERS */
+    const skip = document.querySelector<HTMLElement>('[data-letters-skip]');
+    const lettersSection = document.getElementById('secretariat');
+
+    if (skip && lettersSection) {
+      const syncSkip = () => {
+        const rect = lettersSection.getBoundingClientRect();
+        const shown = -rect.top > window.innerHeight * 0.35 && rect.bottom > window.innerHeight * 1.2;
+        skip.classList.toggle('is-shown', shown);
+      };
+      syncSkip();
+      window.addEventListener('scroll', syncSkip, { passive: true });
+      window.addEventListener('resize', syncSkip);
+    }
   </script>
 </Layout>
