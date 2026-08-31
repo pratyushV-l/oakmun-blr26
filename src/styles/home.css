@@ -677,13 +677,16 @@ body.intro-done .notice { opacity: 1; transform: none; }
 .letter:nth-of-type(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); }
 .letter:nth-of-type(even) .letter__aside { order: 2; }
 
-.letter__aside { position: sticky; top: clamp(5.5rem, 9vw, 7.5rem); }
+.letter__aside { position: sticky; top: clamp(4.9rem, 7vw, 6.25rem); }
 
 .letter__portrait { position: relative; margin: 0; }
 .letter__portrait img {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 5;
+  /* Caps the portrait so the card and its caption always clear the viewport,
+     however short the window is. */
+  max-height: calc(100svh - 15rem);
   object-fit: cover;
   object-position: center 22%;
   filter: saturate(.9) contrast(1.03);
@@ -733,6 +736,53 @@ body.intro-done .notice { opacity: 1; transform: none; }
   line-height: 1.78;
 }
 .letter__body p:first-of-type { color: var(--ink-92); font-size: clamp(1.08rem, 1.5vw, 1.32rem); }
+
+/* SKIP LETTERS */
+.letters-skip {
+  position: sticky;
+  z-index: 5;
+  bottom: clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(-3rem, -6vw, -2rem);
+  pointer-events: none;
+}
+.letters-skip a {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 44px;
+  padding: .8rem 1.3rem;
+  border: 1px solid var(--teal);
+  border-radius: 999px;
+  background: var(--teal);
+  color: var(--navy-900);
+  box-shadow: 0 .6rem 1.75rem rgb(3 13 31 / .45), 0 0 1.5rem rgb(103 196 223 / .3);
+  font-size: var(--t-xxs);
+  font-weight: 800;
+  letter-spacing: var(--track-caps);
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(.75rem);
+  pointer-events: none;
+  transition:
+    opacity 420ms var(--e-out),
+    transform 520ms var(--e-out),
+    background-color var(--d-mid) var(--e-out),
+    border-color var(--d-mid) var(--e-out);
+}
+.letters-skip.is-shown a { opacity: 1; transform: none; pointer-events: auto; }
+.letters-skip a:hover, .letters-skip a:focus-visible {
+  background: var(--teal-pale);
+  border-color: var(--teal-pale);
+}
+.letters-skip a span { transition: transform var(--d-mid) var(--e-out); }
+.letters-skip a:hover span { transform: translateY(2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .letters-skip a { transition: opacity 200ms, background-color 200ms; transform: none; }
+}
 
 /* 03 SCHEDULE */
 .schedule { background: var(--navy-800); }
