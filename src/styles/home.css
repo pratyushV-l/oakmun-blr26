@@ -112,22 +112,28 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
 
 .nav__toggle {
   display: none;
-  place-items: center;
-  gap: 5px;
+  /* place-CONTENT, not place-items: the rows stretch to fill the 44px button
+     otherwise, and the bars end up 16px apart instead of the gap value. */
+  place-content: center;
+  justify-items: center;
+  gap: 4px;
   width: 2.75rem; height: 2.75rem;
+  margin-right: -.5rem;
   padding: 0;
-  border: 1px solid var(--sig-30);
+  border: 0;
   background: transparent;
   cursor: pointer;
 }
 .nav__toggle span {
   display: block;
-  width: 1.1rem; height: 1px;
+  width: 1.25rem; height: 2px;
+  border-radius: 2px;
   background: var(--ink);
-  transition: transform 420ms var(--e-out), opacity 220ms;
+  transition: transform 420ms var(--e-out), opacity 200ms var(--e-out);
 }
-.nav.is-open .nav__toggle span:first-child { transform: translateY(3px) rotate(45deg); }
-.nav.is-open .nav__toggle span:last-child { transform: translateY(-3px) rotate(-45deg); }
+.nav.is-open .nav__toggle span:first-child { transform: translateY(6px) rotate(45deg); }
+.nav.is-open .nav__toggle span:nth-child(2) { opacity: 0; transform: scaleX(.4); }
+.nav.is-open .nav__toggle span:last-child { transform: translateY(-6px) rotate(-45deg); }
 
 .menu {
   position: fixed;
@@ -175,7 +181,10 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
 .menu__cta { justify-self: start; }
 
 @media (max-width: 900px) {
-  .nav { grid-template-columns: 1fr auto; padding-inline: 1.25rem; }
+  /* Two columns so the toggle lands hard right; .nav--page needs naming too,
+     it out-specifies the bare .nav rule. */
+  .nav, .nav--page { grid-template-columns: 1fr auto; padding-inline: 1.25rem; }
+  .nav__end { justify-self: end; }
   .nav__links { display: none; }
   .nav__cta { display: none; }
   .nav__toggle { display: grid; }
@@ -522,7 +531,7 @@ body.intro-done .notice { opacity: 1; transform: none; }
   position: sticky;
   top: 0;
   height: 100svh;
-  padding: clamp(5rem, 9vw, 8rem) 0 clamp(2.5rem, 5vw, 4rem);
+  padding: clamp(7.5rem, 13vw, 11rem) 0 clamp(2.5rem, 5vw, 4rem);
   overflow: hidden;
 }
 .rail-section:not(.is-pinned) .rail-viewport { padding: var(--pad-block) 0; }
