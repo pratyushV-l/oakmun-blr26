@@ -1,0 +1,47 @@
+---
+interface Props {
+  backHref?: string;
+  backLabel?: string;
+}
+
+const { backHref = '#top', backLabel = 'Back to top' } = Astro.props;
+---
+
+<footer class="foot">
+  <div class="foot__top">
+    <div class="foot__brand">
+      <img src="/oakmun-mark.svg" alt="" data-parallax="0.06" />
+      <p class="foot__wordmark">OAKMUN BLR 26</p>
+      <p>Where global perspectives meet purposeful debate.</p>
+    </div>
+
+    <div class="foot__col foot__contact">
+      <h2>Contact Us</h2>
+      <a class="foot__email" href="mailto:oakmun@oakridge.in">oakmun@oakridge.in</a>
+      <a class="foot__social" href="https://www.instagram.com/oak.mun/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+          <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.6" />
+          <circle cx="17.4" cy="6.6" r="1.25" fill="currentColor" />
+        </svg>
+        <span>@oak.mun</span>
+      </a>
+      <p>Visit us at our campus location</p>
+      <div class="foot__map">
+        <iframe
+          src="https://maps.google.com/maps?ll=12.887541,77.751824&amp;z=15&amp;t=h&amp;hl=en&amp;gl=IN&amp;cid=9328012848373940557&amp;output=embed"
+          title="OAKMUN campus location on Google Maps"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p>Bengaluru, India</p>
+    </div>
+  </div>
+
+  <div class="foot__bottom">
+    <span>© 2026 OAKMUN BLR</span>
+    <a class="u-link" href={backHref}>{backLabel} <span aria-hidden="true">↑</span></a>
+  </div>
+</footer>

@@ -1,124 +1,255 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { committees } from '../data/committees';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const initials = (value: string) =>
+  value
+    .split(/[\s/,:-]+/)
+    .filter((word) => /^[A-Z]/.test(word))
+    .map((word) => word[0])
+    .join('');
+
+const searchTerms = (committee: (typeof committees)[number]) =>
+  [
+    committee.name,
+    committee.code,
+    committee.category,
+    committee.format,
+    committee.agenda,
+    committee.shortAgenda,
+    initials(committee.name),
+    initials(committee.category),
+  ]
+    .filter(Boolean)
+    .join(' ');
 ---
 
-<Layout title="Committees — OAKMUN BLR 26">
-  <div class="reference-page">
-    <div class="reference-page__ambient" aria-hidden="true"></div>
-    <main class="reference-main">
-      <header class="catalogue-nav reference-catalogue-nav">
-        <a class="home-brand" href="/"><img src="/oakmun-mark.svg" alt="OAKMUN emblem" /><span>OAKMUN<br />BLR 26</span></a>
-        <a class="catalogue-nav__back" href="/">← Home</a>
-      </header>
-      <section class="reference-hero">
-        <div class="reference-hero__orb reference-hero__orb--a"></div><div class="reference-hero__orb reference-hero__orb--b"></div>
-        <div class="reference-hero__content">
-          <p class="reference-hero__eyebrow">OAKMUN BLR 26 · BENGALURU, INDIA</p>
-          <h1>Committees</h1>
-          <p class="reference-hero__sub">Find your forum, explore its agenda, and prepare to shape the conversation.</p>
+<Layout title="Committees | OAKMUN BLR 26">
+  <a class="skip-link" href="#catalogue">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <div class="catalogue">
+    <div class="catalogue__field" aria-hidden="true"></div>
+
+    <header class="nav nav--page" id="nav">
+      <a class="nav__brand" href="/">
+        <img src="/oakmun-mark.svg" alt="OAKMUN emblem" />
+        <span>OAKMUN<br />BLR 26</span>
+      </a>
+      <a class="nav__back u-link" href="/"><span aria-hidden="true">←</span> Home</a>
+    </header>
+
+    <main class="catalogue__main">
+      <!-- HERO -->
+      <section class="cat-hero">
+        <img class="cat-hero__emblem" src="/oakmun-mark.svg" alt="" aria-hidden="true" data-parallax="0.2" />
+        <p class="cat-hero__eyebrow" data-reveal="up">OAKMUN BLR 26 · BENGALURU, INDIA</p>
+        <h1 class="cat-hero__title" data-split data-reveal="fade">Committees</h1>
+      </section>
+
+      <!-- FILTER BAR -->
+      <section class="filters" aria-label="Filter committees">
+        <div class="filters__inner">
+          <span class="filters__label">Explore by</span>
+          <div class="filters__tabs" role="group" aria-label="Filter by category">
+            <button class="filters__tab is-active" type="button" data-filter="all">All</button>
+            <button class="filters__tab" type="button" data-filter="General Assembly">General Assembly</button>
+            <button class="filters__tab" type="button" data-filter="Specialized Committee">Specialized</button>
+            <button class="filters__tab" type="button" data-filter="Semi-Crisis">Crisis</button>
+            <span class="filters__marker" aria-hidden="true"></span>
+          </div>
+          <label class="filters__search">
+            <span class="sr-only">Search committees</span>
+            <input type="search" placeholder="Search committees" data-committee-search />
+          </label>
         </div>
       </section>
 
-      <section class="reference-filters" aria-label="Filter committees">
-        <div class="reference-filters__inner">
-          <span>Explore by</span>
-          <div class="reference-filter-tags">
-            <button class="reference-filter active" type="button" data-filter="all">All</button>
-            <button class="reference-filter" type="button" data-filter="General Assembly">General Assembly</button>
-            <button class="reference-filter" type="button" data-filter="Specialized Committee">Specialized</button>
-            <button class="reference-filter" type="button" data-filter="Semi-Crisis">Crisis</button>
-          </div>
-          <label class="reference-search"><span class="sr-only">Search committees</span><input type="search" placeholder="Search committees" data-committee-search /></label>
+      <!-- THE CATALOGUE -->
+      <section class="catalogue__grid-shell" id="catalogue" aria-label="OAKMUN committees">
+        <div class="cat-grid" data-stagger>
+          {committees.map((committee) => (
+            <button
+              id={committee.id}
+              class:list={['cat-card', { 'cat-card--classified': committee.confidential }]}
+              type="button"
+              data-committee-card
+              data-reveal="rise"
+              data-confidential={committee.confidential ? 'true' : 'false'}
+              data-name={committee.name}
+              data-category={committee.category}
+              data-format={committee.format}
+              data-size={committee.size}
+              data-agenda={committee.agenda}
+              data-image={committee.image}
+              data-search={searchTerms(committee)}
+            >
+              <span class="cat-card__visual">
+                <img src={committee.image} alt="" loading="lazy" />
+                <span class="cat-card__no u-index">{String(committee.index).padStart(2, '0')}</span>
+                <strong class:list={{ long: committee.code.length > 9 }}>
+                  {committee.confidential ? 'CLASSIFIED' : committee.code}
+                </strong>
+                {!committee.confidential && <span class="cat-card__badge">View agenda</span>}
+              </span>
+              <span class="cat-card__copy">
+                <h2>{committee.confidential ? 'Committee X' : committee.name}</h2>
+                <p>{committee.confidential ? 'Details will be disclosed at the appropriate time.' : committee.shortAgenda}</p>
+              </span>
+            </button>
+          ))}
         </div>
-      </section>
-
-      <section class="reference-grid-shell" aria-label="OAKMUN committees">
-        <div class="reference-committee-grid">
-      {committees.map((committee) => (
-        <button id={committee.id} class:list={['reference-committee-card', { 'reference-committee-card--confidential': committee.confidential }]} type="button" data-committee-card data-confidential={committee.confidential ? 'true' : 'false'} data-name={committee.name} data-category={committee.category} data-format={committee.format} data-size={committee.size} data-agenda={committee.agenda} data-image={committee.image}>
-          <div class="reference-committee-card__visual">
-            <img src={committee.image} alt="" loading="lazy" />
-            <span class="reference-committee-card__number">{String(committee.index).padStart(2, '0')}</span>
-            <strong class:list={{ long: committee.code.length > 9 }}>{committee.confidential ? 'CLASSIFIED' : committee.code}</strong>
-            {!committee.confidential && <span class="reference-committee-card__badge">View agenda</span>}
-          </div>
-          {committee.confidential ? <div class="reference-committee-card__copy"><h2>Committee X</h2><p>Details will be disclosed at the appropriate time.</p></div> : <div class="reference-committee-card__copy"><h2>{committee.name}</h2><p>{committee.shortAgenda}</p></div>}
-        </button>
-      ))}
-        </div>
-        <p class="reference-empty" data-committee-empty hidden>No committees match that search.</p>
+        <p class="cat-empty" data-committee-empty hidden>No committees match that search.</p>
       </section>
     </main>
 
-    <footer class="reference-footer">
-      <div class="reference-footer__top">
-        <div><img src="/oakmun-mark.svg" alt="" /><p class="reference-footer__brand">OAKMUN BLR 26</p><p>Where global perspectives meet purposeful debate.</p></div>
-        <div><h2>Explore</h2><a href="/committees">Committees</a><a href="/#schedule">Schedule</a><a href="/#resources">Resources</a></div>
-        <div><h2>Contact</h2><a href="mailto:mun@oakridge.in">mun@oakridge.in</a><p>Bengaluru, India</p></div>
-      </div>
-      <div class="reference-footer__bottom"><span>© 2026 OAKMUN BLR</span><a href="/">Return home ↑</a></div>
-    </footer>
+    <!-- FOOTER -->
+    <SiteFooter backHref="/" backLabel="Return home" />
   </div>
 
-  <dialog class="committee-dialog" aria-labelledby="dialog-title">
-    <button class="committee-dialog__close" type="button" aria-label="Close committee details">×</button>
-    <img class="committee-dialog__image" src="" alt="" />
-    <div class="committee-dialog__body">
-      <p class="committee-dialog__meta"></p>
+  <dialog class="sheet" aria-labelledby="dialog-title">
+    <button class="sheet__close" type="button" aria-label="Close committee details"><span aria-hidden="true">×</span></button>
+    <div class="sheet__media"><img class="sheet__image" src="" alt="" /></div>
+    <div class="sheet__body">
+      <p class="sheet__meta"></p>
       <h2 id="dialog-title"></h2>
-      <p class="committee-dialog__agenda"></p>
-      <span class="committee-dialog__label">OAKMUN BLR 26 · FINAL AGENDA</span>
-      <a class="committee-dialog__guide" href="#" aria-disabled="true">Background guide <span>Coming soon</span></a>
+      <hr class="u-rule" />
+      <p class="sheet__agenda"></p>
+      <span class="sheet__label"></span>
+      <a class="sheet__guide" href="#" aria-disabled="true">Background guide <span>Coming soon</span></a>
     </div>
   </dialog>
 
   <script>
-    const dialog = document.querySelector<HTMLDialogElement>('.committee-dialog');
-    const closeButton = dialog?.querySelector<HTMLButtonElement>('.committee-dialog__close');
-    const image = dialog?.querySelector<HTMLImageElement>('.committee-dialog__image');
-    const title = dialog?.querySelector<HTMLHeadingElement>('#dialog-title');
-    const meta = dialog?.querySelector<HTMLElement>('.committee-dialog__meta');
-    const agenda = dialog?.querySelector<HTMLElement>('.committee-dialog__agenda');
-    const label = dialog?.querySelector<HTMLElement>('.committee-dialog__label');
-    const guide = dialog?.querySelector<HTMLElement>('.committee-dialog__guide');
+    import { initMotion } from '../scripts/motion';
+    import { initNav } from '../scripts/nav';
+
+    initNav(document.getElementById('nav'));
+    initMotion(document);
+    document.body.classList.add('intro-done');
+
+    /* FILTERING */
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     const search = document.querySelector<HTMLInputElement>('[data-committee-search]');
     const empty = document.querySelector<HTMLElement>('[data-committee-empty]');
-    const filters = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    const marker = document.querySelector<HTMLElement>('.filters__marker');
+    const cards = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-committee-card]'));
     let activeFilter = 'all';
+
+    const moveMarker = (tab: HTMLElement) => {
+      if (!marker) return;
+      marker.style.width = `${tab.offsetWidth}px`;
+      marker.style.transform = `translateX(${tab.offsetLeft}px)`;
+    };
+
+    const squash = (value: string) => value.replace(/[^a-z0-9]+/g, '');
+
+    const matchesQuery = (haystack: string, term: string) => {
+      if (!term) return true;
+      const squashedTerm = squash(term);
+      if (!squashedTerm) return true;
+      const startsWithTerm = haystack
+        .split(/\s+/)
+        .some((token) => token.startsWith(term) || squash(token).startsWith(squashedTerm));
+      if (term.length <= 2) return startsWithTerm;
+      return startsWithTerm || haystack.includes(term) || squash(haystack).includes(squashedTerm);
+    };
+
     const updateCards = () => {
       const term = search?.value.toLowerCase().trim() || '';
       let visible = 0;
-      document.querySelectorAll<HTMLButtonElement>('[data-committee-card]').forEach((card) => {
+      let shownIndex = 0;
+
+      cards.forEach((card) => {
         const category = card.dataset.category || '';
         const matchesFilter = activeFilter === 'all' || category === activeFilter;
-        const haystack = `${card.dataset.name} ${category} ${card.dataset.agenda}`.toLowerCase();
-        const matchesSearch = !term || haystack.includes(term);
-        card.hidden = !matchesFilter || !matchesSearch;
-        if (!card.hidden) visible++;
+        const matchesSearch = matchesQuery((card.dataset.search || '').toLowerCase(), term);
+        const show = matchesFilter && matchesSearch;
+
+        if (show) {
+          visible += 1;
+          card.style.setProperty('--i', String(shownIndex));
+          shownIndex += 1;
+          if (card.hidden) {
+            card.hidden = false;
+            card.classList.add('is-out');
+            void card.offsetWidth;
+          }
+          card.classList.remove('is-out');
+        } else if (!card.hidden) {
+          card.classList.add('is-out');
+          if (reduce.matches) card.hidden = true;
+          else window.setTimeout(() => { if (card.classList.contains('is-out')) card.hidden = true; }, 240);
+        }
       });
+
       if (empty) empty.hidden = visible > 0;
     };
+
     search?.addEventListener('input', updateCards);
-    filters.forEach((filter) => filter.addEventListener('click', () => {
-      activeFilter = filter.dataset.filter || 'all';
-      filters.forEach((item) => item.classList.toggle('active', item === filter));
+    tabs.forEach((tab) => tab.addEventListener('click', () => {
+      activeFilter = tab.dataset.filter || 'all';
+      tabs.forEach((item) => item.classList.toggle('is-active', item === tab));
+      moveMarker(tab);
       updateCards();
     }));
-    document.querySelectorAll<HTMLButtonElement>('[data-committee-card]').forEach((card) => {
+
+    const activeTab = tabs.find((tab) => tab.classList.contains('is-active'));
+    if (activeTab) requestAnimationFrame(() => moveMarker(activeTab));
+    window.addEventListener('resize', () => {
+      const current = tabs.find((tab) => tab.classList.contains('is-active'));
+      if (current) moveMarker(current);
+    });
+
+    /* DETAIL SHEET */
+    const dialog = document.querySelector<HTMLDialogElement>('.sheet');
+    const closeButton = dialog?.querySelector<HTMLButtonElement>('.sheet__close');
+    const image = dialog?.querySelector<HTMLImageElement>('.sheet__image');
+    const title = dialog?.querySelector<HTMLHeadingElement>('#dialog-title');
+    const meta = dialog?.querySelector<HTMLElement>('.sheet__meta');
+    const agenda = dialog?.querySelector<HTMLElement>('.sheet__agenda');
+    const label = dialog?.querySelector<HTMLElement>('.sheet__label');
+    const guide = dialog?.querySelector<HTMLElement>('.sheet__guide');
+
+    cards.forEach((card) => {
       card.addEventListener('click', () => {
         if (!dialog || !image || !title || !meta || !agenda || !label || !guide) return;
+        const rect = card.getBoundingClientRect();
         image.src = card.dataset.image || '';
         title.textContent = card.dataset.name || '';
         const classified = card.dataset.confidential === 'true';
-        meta.textContent = classified ? 'CLASSIFIED COMMITTEE' : `${card.dataset.category} · ${card.dataset.format} · ${card.dataset.size} delegates`;
-        agenda.textContent = classified ? 'This committee’s details remain undisclosed.' : card.dataset.agenda || '';
-        label.textContent = classified ? 'OAKMUN BLR 26 · RESTRICTED ACCESS' : 'OAKMUN BLR 26 · FINAL AGENDA';
+        meta.textContent = classified
+          ? 'CLASSIFIED COMMITTEE'
+          : `${card.dataset.category} · ${card.dataset.format} · ${card.dataset.size} delegates`;
+        agenda.textContent = classified
+          ? 'This committee’s details remain undisclosed.'
+          : card.dataset.agenda || '';
+        label.textContent = classified
+          ? 'OAKMUN BLR 26 · RESTRICTED ACCESS'
+          : 'OAKMUN BLR 26 · FINAL AGENDA';
         guide.hidden = classified;
         dialog.showModal();
+
+        // Grow the sheet out of the tile that opened it.
+        const sheet = dialog.getBoundingClientRect();
+        const clamp = (value: number, max: number) => Math.max(0, Math.min(max, value));
+        dialog.style.transformOrigin =
+          `${clamp(rect.left + rect.width / 2 - sheet.left, sheet.width)}px `
+          + `${clamp(rect.top + rect.height / 2 - sheet.top, sheet.height)}px`;
+        requestAnimationFrame(() => dialog.classList.add('is-open'));
       });
     });
-    closeButton?.addEventListener('click', () => dialog?.close());
-    dialog?.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+
+    const close = () => {
+      if (!dialog) return;
+      dialog.classList.remove('is-open');
+      if (reduce.matches) dialog.close();
+      else window.setTimeout(() => dialog.close(), 240);
+    };
+    closeButton?.addEventListener('click', close);
+    dialog?.addEventListener('click', (event) => { if (event.target === dialog) close(); });
+    dialog?.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
   </script>
 </Layout>
