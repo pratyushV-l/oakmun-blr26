@@ -1,0 +1,192 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { leads, crew } from '../data/team';
+
+const pillars = [
+  {
+    title: 'Student Voice at the Center',
+    body: 'At OAKMUN, we believe every delegate matters. Whether you’re an experienced speaker or stepping up on the podium for the first time, this is your platform to be heard, be bold, and make an impact. We empower unheard voices, encouraging delegates to speak with confidence, and leave a mark.',
+  },
+  {
+    title: 'Hosted by Oakridge International, Bengaluru',
+    body: 'Part of the renowned Nord Anglia Education network, Oakridge is known for academic excellence, global exposure, and leadership development. With a strong legacy of nurturing changemakers, Oakridge ensures top-tier hosting, professionalism, and inclusivity.',
+  },
+  {
+    title: 'A Culture of Excellence',
+    body: 'From world-class infrastructure to a meticulously curated team of student leaders, OAKMUN reflects the best of what Oakridge stands for: prestige, innovation, and passion.',
+  },
+  {
+    title: 'Platform for Lasting Impact',
+    body: 'OAKMUN isn’t just a two-day event, it’s an experience that shapes futures. Through dynamic crises, interactive committees, expert chairs, and real-world agendas, we aim to ignite purpose, and inspire lifelong leaders.',
+  },
+  {
+    title: 'Every Detail Counts',
+    body: 'From immersive room setups and engaging workshops to thoughtful delegate kits and memorable closing ceremonies, OAKMUN is built to impress, empower, and endure.',
+  },
+];
+
+const sponsorTiers = [
+  { tier: 'Platinum', slots: 1 },
+  { tier: 'Gold', slots: 3 },
+  { tier: 'Silver', slots: 3 },
+];
+---
+
+<Layout title="About Us | OAKMUN BLR 26">
+  <a class="skip-link" href="#about-main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <div class="about">
+    <div class="about__field" aria-hidden="true"></div>
+
+    <header class="nav nav--page" id="nav">
+      <a class="nav__brand" href="/">
+        <img src="/oakmun-mark.svg" alt="OAKMUN emblem" />
+        <span>OAKMUN<br />BLR 26</span>
+      </a>
+      <a class="nav__back u-link" href="/"><span aria-hidden="true">←</span> Home</a>
+    </header>
+
+    <main class="about__main" id="about-main">
+      <!-- HERO -->
+      <section class="ab-hero" data-scrub="out">
+        <div class="ab-hero__layers" aria-hidden="true">
+          <span class="ab-hero__grid"></span>
+          <span class="ab-hero__halo"></span>
+          <img class="ab-hero__emblem" src="/oakmun-mark.svg" alt="" data-parallax="0.26" />
+          <span class="ab-hero__watermark">26</span>
+        </div>
+        <p class="ab-hero__eyebrow" data-reveal="up">Welcome to OakMUN 2026</p>
+        <h1 class="ab-hero__title" data-split data-reveal="fade">About Us</h1>
+        <p class="ab-hero__tagline" data-reveal="up" data-reveal-delay="260">Ideas too bright to be silenced</p>
+        <span class="ab-hero__cue" aria-hidden="true"></span>
+      </section>
+
+      <!-- MISSION & VISION -->
+      <section class="creed" id="creed">
+        <div class="creed__rail">
+          <span class="u-index u-badge" data-reveal="up">01</span>
+          <p class="creed__label" data-reveal="up">Our Creed</p>
+          <span class="creed__mark" aria-hidden="true"></span>
+        </div>
+        <div class="creed__body">
+          <article class="creed__panel" data-scrub="cover">
+            <h2 data-reveal="up">Our Mission</h2>
+            <p data-reveal="up" data-reveal-delay="120">To foster a transformative and inclusive platform where change makers can engage and evolve through diplomacy. OakMUN 2026 is committed to delivering an intellectually enriching and empowering MUN experience that equips every delegate with the confidence, skills, and networks to become bold, informed voices of change.</p>
+          </article>
+          <article class="creed__panel" data-scrub="cover">
+            <h2 data-reveal="up">Our Vision</h2>
+            <p data-reveal="up" data-reveal-delay="120">Empowering youth with diverse perspectives to speak up and make an impact. We envision a world where every delegate discovers their voice and contributes meaningfully to global conversations. Through innovation, creativity, and international collaboration, we are building a legacy of diplomacy and problem solving that transforms futures.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- WHAT IS OAKMUN 2026 -->
+      <section class="what" id="what">
+        <div class="what__band" data-scrub="cover" aria-hidden="true">
+          <img src="/gallery/flags-debate.jpg" alt="" loading="lazy" />
+        </div>
+        <div class="what__copy">
+          <div class="what__head">
+            <span class="u-index u-badge" data-reveal="up">02</span>
+            <h2 class="what__title" data-split data-reveal="fade">What is OakMUN 2026?</h2>
+          </div>
+          <hr class="u-rule" data-reveal="draw" data-reveal-delay="160" />
+          <p data-reveal="up" data-reveal-delay="220">Hosted in collaboration with the Nord Anglia Education network, OakMUN 2026 brings together students from across continents, cultures, and perspectives. It’s a platform where global delegates meet, connect, and engage in discussions that goes beyond borders.</p>
+          <p data-reveal="up" data-reveal-delay="300">Whether you're a first-time delegate or a seasoned debater, this is your space to grow, network, and be heard. With immersive committees, world-class Executive Boards, and participants. OakMUN 2026 offers a unique opportunity to build real-world skills in a setting that mirrors today’s global diplomacy.</p>
+          <p class="what__pull" data-reveal="up" data-reveal-delay="380">At OakMUN 2026, your voice has power, and we make sure the world listens.</p>
+        </div>
+      </section>
+
+      <!-- WHY WE STAND OUT -->
+      <section class="pillars" id="pillars">
+        <div class="pillars__head">
+          <span class="u-index u-badge" data-reveal="up">03</span>
+          <h2 data-split data-reveal="fade">Why OakMUN 2026 Stands Out!</h2>
+        </div>
+        <ol class="pillars__list" data-stagger>
+          {pillars.map((pillar, index) => (
+            <li class="pillar" data-reveal="up">
+              <span class="pillar__no u-index">{String(index + 1).padStart(2, '0')}</span>
+              <div class="pillar__copy">
+                <h3>{pillar.title}</h3>
+                <p>{pillar.body}</p>
+              </div>
+              <span class="pillar__edge" aria-hidden="true"></span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- MEET THE HODs -->
+      <section class="team" id="team">
+        <header class="masthead">
+          <span class="u-index" data-reveal="up">04</span>
+          <h2 data-split data-reveal="fade">MEET THE HODs</h2>
+        </header>
+        <div class="team__leads" data-stagger>
+          {leads.map((member) => (
+            <article class="crew crew--lead" data-reveal="rise">
+              <div class="crew__frame" data-parallax="0.05">
+                <img src={member.portrait} alt={`${member.name}, ${member.role}`} loading="lazy" width="900" height="1350" />
+                <span class="crew__dept">{member.department}</span>
+              </div>
+              <div class="crew__meta">
+                <strong>{member.name}</strong>
+                <small>{member.role}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="team__grid" data-stagger>
+          {crew.map((member) => (
+            <article class="crew" data-reveal="rise">
+              <div class="crew__frame">
+                <img src={member.portrait} alt={`${member.name}, ${member.role}`} loading="lazy" width="900" height="1350" />
+                <span class="crew__dept">{member.department}</span>
+              </div>
+              <div class="crew__meta">
+                <strong>{member.name}</strong>
+                <small>{member.role}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- SPONSORS -->
+      <section class="sponsors" id="sponsors">
+        <header class="masthead">
+          <span class="u-index" data-reveal="up">05</span>
+          <h2 data-split data-reveal="fade">OUR SPONSORS</h2>
+          <p role="status" data-reveal="up" data-reveal-delay="180">Still Finalizing!</p>
+        </header>
+        <div class="sponsors__tiers">
+          {sponsorTiers.map((tier) => (
+            <div class="tier" data-reveal="up">
+              <p class="tier__name">{tier.tier}</p>
+              <div class="tier__slots">
+                {Array.from({ length: tier.slots }).map(() => (
+                  <span class="skeleton" aria-hidden="true"></span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter backHref="/" backLabel="Return home" />
+  </div>
+
+  <script>
+    import { initMotion } from '../scripts/motion';
+    import { initNav } from '../scripts/nav';
+
+    initNav(document.getElementById('nav'));
+    initMotion(document);
+    document.body.classList.add('intro-done');
+  </script>
+</Layout>
