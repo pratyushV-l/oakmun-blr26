@@ -3,6 +3,7 @@
 const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 const fineMQ = window.matchMedia('(hover: hover) and (pointer: fine)');
 const railMQ = window.matchMedia('(min-width: 901px)');
+const railScrollRatio = 0.72;
 
 const clamp = (v: number, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -253,7 +254,10 @@ function initRails(scope: ParentNode) {
       }
       const distance = Math.max(0, track.scrollWidth - viewport.clientWidth);
       section.style.setProperty('--rail-d', String(distance));
-      section.style.height = `${window.innerHeight + distance}px`;
+      // The rail still reaches its final card exactly at the end of the pinned
+      // section, but its vertical travel is intentionally more compact than
+      // the horizontal distance so the page does not linger after the last card.
+      section.style.height = `${window.innerHeight + distance * railScrollRatio}px`;
     }
   };
 
