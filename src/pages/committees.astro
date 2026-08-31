@@ -93,10 +93,10 @@ const searchTerms = (committee: (typeof committees)[number]) =>
       <section class="catalogue__grid-shell" id="catalogue" aria-label="OAKMUN committees">
         <div class="cat-grid" data-stagger>
           {committees.map((committee) => (
-            <button
+            <a
               id={committee.id}
               class:list={['cat-card', { 'cat-card--classified': committee.confidential }]}
-              type="button"
+              href={`/committees/${committee.id}`}
               data-committee-card
               data-reveal="rise"
               data-confidential={committee.confidential ? 'true' : 'false'}
@@ -120,7 +120,7 @@ const searchTerms = (committee: (typeof committees)[number]) =>
                 <h2>{committee.confidential ? 'Committee X' : committee.name}</h2>
                 <p>{committee.confidential ? 'Details will be disclosed at the appropriate time.' : committee.shortAgenda}</p>
               </span>
-            </button>
+            </a>
           ))}
         </div>
         <p class="cat-empty" data-committee-empty hidden>No committees match that search.</p>
@@ -130,19 +130,6 @@ const searchTerms = (committee: (typeof committees)[number]) =>
     <!-- FOOTER -->
     <SiteFooter backHref="/" backLabel="Return home" />
   </div>
-
-  <dialog class="sheet" aria-labelledby="dialog-title">
-    <button class="sheet__close" type="button" aria-label="Close committee details"><span aria-hidden="true">×</span></button>
-    <div class="sheet__media"><img class="sheet__image" src="" alt="" /></div>
-    <div class="sheet__body">
-      <p class="sheet__meta"></p>
-      <h2 id="dialog-title"></h2>
-      <hr class="u-rule" />
-      <p class="sheet__agenda"></p>
-      <span class="sheet__label"></span>
-      <a class="sheet__guide" href="#" aria-disabled="true">Background guide <span>Coming soon</span></a>
-    </div>
-  </dialog>
 
   <script>
     import { initMotion } from '../scripts/motion';
@@ -158,7 +145,7 @@ const searchTerms = (committee: (typeof committees)[number]) =>
     const empty = document.querySelector<HTMLElement>('[data-committee-empty]');
     const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
     const marker = document.querySelector<HTMLElement>('.filters__marker');
-    const cards = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-committee-card]'));
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-committee-card]'));
     let activeFilter = 'all';
 
     const moveMarker = (tab: HTMLElement) => {
@@ -226,53 +213,5 @@ const searchTerms = (committee: (typeof committees)[number]) =>
       if (current) moveMarker(current);
     });
 
-    /* DETAIL SHEET */
-    const dialog = document.querySelector<HTMLDialogElement>('.sheet');
-    const closeButton = dialog?.querySelector<HTMLButtonElement>('.sheet__close');
-    const image = dialog?.querySelector<HTMLImageElement>('.sheet__image');
-    const title = dialog?.querySelector<HTMLHeadingElement>('#dialog-title');
-    const meta = dialog?.querySelector<HTMLElement>('.sheet__meta');
-    const agenda = dialog?.querySelector<HTMLElement>('.sheet__agenda');
-    const label = dialog?.querySelector<HTMLElement>('.sheet__label');
-    const guide = dialog?.querySelector<HTMLElement>('.sheet__guide');
-
-    cards.forEach((card) => {
-      card.addEventListener('click', () => {
-        if (!dialog || !image || !title || !meta || !agenda || !label || !guide) return;
-        const rect = card.getBoundingClientRect();
-        image.src = card.dataset.image || '';
-        title.textContent = card.dataset.name || '';
-        const classified = card.dataset.confidential === 'true';
-        meta.textContent = classified
-          ? 'CLASSIFIED COMMITTEE'
-          : `${card.dataset.category} · ${card.dataset.format} · ${card.dataset.size} delegates`;
-        agenda.textContent = classified
-          ? 'This committee’s details remain undisclosed.'
-          : card.dataset.agenda || '';
-        label.textContent = classified
-          ? 'OAKMUN BLR 26 · RESTRICTED ACCESS'
-          : 'OAKMUN BLR 26 · FINAL AGENDA';
-        guide.hidden = classified;
-        dialog.showModal();
-
-        // Grow the sheet out of the tile that opened it.
-        const sheet = dialog.getBoundingClientRect();
-        const clamp = (value: number, max: number) => Math.max(0, Math.min(max, value));
-        dialog.style.transformOrigin =
-          `${clamp(rect.left + rect.width / 2 - sheet.left, sheet.width)}px `
-          + `${clamp(rect.top + rect.height / 2 - sheet.top, sheet.height)}px`;
-        requestAnimationFrame(() => dialog.classList.add('is-open'));
-      });
-    });
-
-    const close = () => {
-      if (!dialog) return;
-      dialog.classList.remove('is-open');
-      if (reduce.matches) dialog.close();
-      else window.setTimeout(() => dialog.close(), 240);
-    };
-    closeButton?.addEventListener('click', close);
-    dialog?.addEventListener('click', (event) => { if (event.target === dialog) close(); });
-    dialog?.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
   </script>
 </Layout>

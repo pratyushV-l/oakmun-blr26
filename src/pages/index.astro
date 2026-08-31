@@ -183,7 +183,7 @@ const introAssets = [
           {committees.map((committee) => (
             <a
               class:list={['plate', { 'plate--classified': committee.confidential }]}
-              href={`/committees#${committee.id}`}
+              href={`/committees/${committee.id}`}
               aria-label={`View ${committee.name}`}
             >
               <div class="plate__media">

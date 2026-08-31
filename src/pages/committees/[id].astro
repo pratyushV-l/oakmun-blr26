@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { committees, type Committee } from '../../data/committees';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return committees.map((committee) => ({
+    params: { id: committee.id },
+    props: { committee },
+  }));
+}
+
+const { committee } = Astro.props as { committee: Committee };
+const isRestricted = Boolean(committee.confidential);
+const committeeTitle = isRestricted ? 'Committee X' : committee.name;
+const committeeMeta = isRestricted
+  ? 'RESTRICTED ACCESS'
+  : `${committee.category} · ${committee.format} · ${committee.size} delegates`;
+const overview = isRestricted
+  ? 'The particulars of this committee will be disclosed at the appropriate time.'
+  : committee.description;
+---
+
+<Layout title={`${committeeTitle} | Committees | OAKMUN BLR 26`}>
+  <a class="skip-link" href="#committee-main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <div class="catalogue committee-page">
+    <div class="catalogue__field" aria-hidden="true"></div>
+
+    <header class="nav nav--page" id="nav">
+      <a class="nav__brand" href="/">
+        <img src="/oakmun-mark.svg" alt="OAKMUN emblem" />
+        <span>OAKMUN<br />BLR 26</span>
+      </a>
+      <nav class="nav__links" aria-label="Main navigation">
+        <a href="/about-us">About Us</a>
+        <a href="/committees">Committees</a>
+        <a href="/#schedule">Schedule</a>
+        <a href="/#resources">Resources</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+      <div class="nav__end">
+        <a class="nav__cta" href="/#register" data-magnetic="7">Register <span>↗</span></a>
+        <button class="nav__toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" data-menu-panel hidden>
+      <nav class="menu__links" aria-label="Main navigation">
+        <a href="/about-us"><i class="u-index" aria-hidden="true">01</i>About Us</a>
+        <a href="/committees"><i class="u-index" aria-hidden="true">02</i>Committees</a>
+        <a href="/#schedule"><i class="u-index" aria-hidden="true">03</i>Schedule</a>
+        <a href="/#resources"><i class="u-index" aria-hidden="true">04</i>Resources</a>
+        <a href="/#faq"><i class="u-index" aria-hidden="true">05</i>FAQ</a>
+      </nav>
+      <a class="menu__cta btn btn--solid" href="/#register">Register <span>↗</span></a>
+    </div>
+
+    <main class="committee-detail" id="committee-main">
+      <a class="committee-detail__back u-link" href="/committees"><span aria-hidden="true">←</span> All committees</a>
+
+      <section class="committee-detail__hero" data-scrub="out">
+        <img class="committee-detail__image" src={committee.image} alt="" aria-hidden="true" />
+        <div class="committee-detail__veil" aria-hidden="true"></div>
+        <div class="committee-detail__hero-copy">
+          <span class="u-index committee-detail__number">{String(committee.index).padStart(2, '0')}</span>
+          <p class="committee-detail__label" data-reveal="up">Committee</p>
+          <h1 data-split data-reveal="fade">{committee.code}</h1>
+          <p class="committee-detail__name" data-reveal="up" data-reveal-delay="160">{committeeTitle}</p>
+        </div>
+      </section>
+
+      <nav class="committee-detail__tabs" aria-label="Committee details">
+        <a href="#overview">Overview</a>
+        <a href="#agenda">Agenda</a>
+      </nav>
+
+      <section class="committee-detail__body">
+        <div class="committee-detail__meta" data-reveal="up">
+          <span>{committeeMeta}</span>
+          <span>OAKMUN BLR 26</span>
+        </div>
+
+        <article class="committee-detail__section" id="overview">
+          <p class="committee-detail__eyebrow" data-reveal="up">Overview</p>
+          <p data-reveal="up" data-reveal-delay="100">{overview}</p>
+        </article>
+
+        <article class="committee-detail__section committee-detail__section--agenda" id="agenda">
+          <p class="committee-detail__eyebrow" data-reveal="up">Agenda</p>
+          <h2 data-reveal="up" data-reveal-delay="100">{isRestricted ? 'To be announced' : 'Agenda item'}</h2>
+          <p class="committee-detail__agenda" data-reveal="up" data-reveal-delay="180">{isRestricted ? 'Details will be disclosed at the appropriate time.' : committee.agenda}</p>
+          <span class="committee-detail__status" data-reveal="up" data-reveal-delay="240">Background guide · Coming soon</span>
+        </article>
+
+        <section class="committee-detail__section committee-detail__section--eb" aria-labelledby="eb-title">
+          <p class="committee-detail__eyebrow" data-reveal="up">Executive Board</p>
+          <h2 id="eb-title" data-reveal="up" data-reveal-delay="100">Meet the EB</h2>
+          <div class="committee-detail__eb-grid" data-stagger>
+            {['Chair', 'Vice-Chair', 'Director'].map((role) => (
+              <article class="committee-detail__eb" data-reveal="up">
+                <span aria-hidden="true"></span>
+                <p>To be announced</p>
+                <small>{role}</small>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <SiteFooter backHref="/committees" backLabel="All committees" />
+  </div>
+
+  <script>
+    import { initMotion } from '../../scripts/motion';
+    import { initNav } from '../../scripts/nav';
+
+    initNav(document.getElementById('nav'));
+    initMotion(document);
+    document.body.classList.add('intro-done');
+  </script>
+</Layout>
