@@ -37,8 +37,31 @@ const searchTerms = (committee: (typeof committees)[number]) =>
         <img src="/oakmun-mark.svg" alt="OAKMUN emblem" />
         <span>OAKMUN<br />BLR 26</span>
       </a>
-      <a class="nav__back u-link" href="/"><span aria-hidden="true">←</span> Home</a>
+      <nav class="nav__links" aria-label="Main navigation">
+        <a href="/about-us">About Us</a>
+        <a href="/committees">Committees</a>
+        <a href="/#schedule">Schedule</a>
+        <a href="/#resources">Resources</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+      <div class="nav__end">
+        <a class="nav__cta" href="/#register" data-magnetic="7">Register <span>↗</span></a>
+        <button class="nav__toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+          <span aria-hidden="true"></span><span aria-hidden="true"></span>
+        </button>
+      </div>
     </header>
+
+    <div class="menu" id="menu" data-menu-panel hidden>
+      <nav class="menu__links" aria-label="Main navigation">
+        <a href="/about-us"><i class="u-index" aria-hidden="true">01</i>About Us</a>
+        <a href="/committees"><i class="u-index" aria-hidden="true">02</i>Committees</a>
+        <a href="/#schedule"><i class="u-index" aria-hidden="true">03</i>Schedule</a>
+        <a href="/#resources"><i class="u-index" aria-hidden="true">04</i>Resources</a>
+        <a href="/#faq"><i class="u-index" aria-hidden="true">05</i>FAQ</a>
+      </nav>
+      <a class="menu__cta btn btn--solid" href="/#register">Register <span>↗</span></a>
+    </div>
 
     <main class="catalogue__main">
       <!-- HERO -->

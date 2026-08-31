@@ -22,7 +22,7 @@
 .catalogue__main, .foot { position: relative; z-index: 1; }
 .catalogue__main { padding-bottom: clamp(5rem, 10vw, 9rem); }
 
-.nav--page { grid-template-columns: 1fr auto; }
+.nav--page { grid-template-columns: 1fr auto 1fr; }
 .nav--page.is-retreated { transform: none; }
 .nav__back {
   justify-self: end;
