@@ -194,7 +194,7 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
 .hero {
   position: relative;
   min-height: 100svh;
-  padding: clamp(6rem, 10vw, 8rem) var(--pad-inline) clamp(9rem, 14vw, 11rem);
+  padding: clamp(6rem, 10vw, 8rem) var(--pad-inline) clamp(5rem, 9vw, 7.5rem);
   overflow: clip;
   isolation: isolate;
 }
@@ -273,6 +273,8 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
 
 .deck__card {
   --band-o: .9;
+  pointer-events: auto;
+  text-decoration: none;
   --s: 1;
   --dy: 0px;
   --dx: 0px;
@@ -292,7 +294,11 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
   overflow: hidden;
   opacity: 0;
   transform: translate(-50%, -50%) translate3d(var(--dx), var(--dy), 0) rotate(var(--r)) scale(var(--s));
-  transition: opacity 1200ms var(--e-out) calc(var(--i, 0) * 55ms + 240ms);
+  transition:
+    opacity 1200ms var(--e-out) calc(var(--i, 0) * 55ms + 240ms),
+    filter 460ms var(--e-out),
+    border-color 460ms var(--e-out),
+    box-shadow 460ms var(--e-out);
   animation: deck-drift 11s ease-in-out infinite alternate;
   animation-delay: calc(var(--i, 0) * -1.4s);
 }
@@ -301,6 +307,58 @@ body.intro-done .deck__card { opacity: var(--band-o); }
 .deck__card--b1 { --band-o: .3;  --s: .66; --dy: calc(var(--p, 0) * -6vh);  --dx: calc(var(--p, 0) * 1vw);  filter: blur(2.5px); }
 .deck__card--b2 { --band-o: .58; --s: .85; --dy: calc(var(--p, 0) * -19vh); --dx: calc(var(--p, 0) * 2.5vw); filter: blur(1px); }
 .deck__card--b3 { --band-o: .95; --s: 1;   --dy: calc(var(--p, 0) * -42vh); --dx: calc(var(--p, 0) * 5vw); }
+
+/* Hover dissolve: the card sharpens and its label crossfades to the prompt. */
+.deck__more {
+  position: absolute;
+  z-index: 2;
+  inset: auto 1rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--navy-900);
+  font-size: var(--t-xxs);
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(.5rem);
+  transition: opacity 320ms var(--e-out), transform 420ms var(--e-out);
+}
+.deck__more i { font-style: normal; }
+.deck__card::before,
+.deck__card > span,
+.deck__card > strong,
+.deck__card .deck__mark,
+.deck__photo { transition: opacity 320ms var(--e-out); }
+
+/* A teal plate fades up behind the prompt so the label is always legible. */
+.deck__card > .deck__more::before {
+  content: '';
+  position: absolute;
+  inset: -1rem;
+  z-index: -1;
+  background: linear-gradient(to top, var(--teal), rgb(103 196 223 / .82) 62%, transparent);
+}
+
+body.intro-done .deck__card:hover,
+body.intro-done .deck__card:focus-visible {
+  filter: blur(0);
+  opacity: 1;
+  border-color: var(--teal);
+  box-shadow: var(--lift-3), 0 0 2rem rgb(103 196 223 / .35);
+  z-index: 3;
+}
+.deck__card:hover > span,
+.deck__card:hover > strong,
+.deck__card:hover .deck__mark { opacity: 0; }
+.deck__card:hover .deck__photo { opacity: .78; }
+.deck__card:hover .deck__more { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .deck__more { transition: opacity 200ms; transform: none; }
+}
 
 @keyframes deck-drift { from { translate: 0 0; } to { translate: .55rem -1.15rem; } }
 
@@ -358,7 +416,10 @@ body.intro-done .deck__card { opacity: var(--band-o); }
   display: grid;
   justify-items: start;
   width: min(46rem, 54vw);
-  margin-top: clamp(2rem, 8vh, 6rem);
+  margin-top: clamp(1rem, 5vh, 3.5rem);
+  /* The block is wider than its text, so it was covering the cards behind it.
+     Only the controls inside it need to catch the pointer. */
+  pointer-events: none;
   transform: translateY(calc(var(--p, 0) * -13vh));
   opacity: calc(1 - var(--p, 0) * 1.5);
 }
@@ -397,7 +458,7 @@ body.intro-done .hero__type > * { opacity: 1; transform: none; }
 }
 
 .hero__title {
-  margin: 1.1rem 0 1.35rem;
+  margin: clamp(1.4rem, 2.6vh, 2.1rem) 0 clamp(1.5rem, 2.8vh, 2.25rem);
   font-size: clamp(4.4rem, 10.5vw, 10.5rem);
   font-weight: 900;
   letter-spacing: -.085em;
@@ -423,14 +484,14 @@ body.intro-done .hero__title .line > span { transform: none; }
   letter-spacing: var(--track-caps);
 }
 
-.hero__actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
-.hero__actions .btn { translate: var(--mag-x, 0) var(--mag-y, 0); }
+.hero__actions { display: flex; flex-wrap: wrap; gap: .85rem; margin-top: clamp(1.9rem, 3.6vh, 3rem); }
+.hero__actions .btn { translate: var(--mag-x, 0) var(--mag-y, 0); pointer-events: auto; }
 
 .countdown {
   display: flex;
   align-items: flex-start;
   gap: .5rem;
-  margin-top: 1.75rem;
+  margin-top: clamp(1.9rem, 3.6vh, 3rem);
   color: var(--teal);
 }
 .countdown span { display: grid; gap: .35rem; font-size: .5625rem; font-weight: 800; letter-spacing: .14em; }
@@ -447,65 +508,7 @@ body.intro-done .hero__title .line > span { transform: none; }
 }
 .countdown i { margin-top: .5rem; color: var(--sig-55); font-size: 1.2rem; font-style: normal; }
 
-.notices {
-  position: absolute;
-  z-index: 2;
-  left: var(--pad-inline);
-  bottom: clamp(1.75rem, 4vw, 3.5rem);
-  display: flex;
-  width: min(44rem, 54vw);
-  border-top: 1px solid var(--rule-strong);
-  transform: translateY(calc(var(--p, 0) * -6vh));
-  opacity: calc(1 - var(--p, 0) * 1.8);
-}
-.notice {
-  position: relative;
-  flex: 1;
-  display: grid;
-  align-content: start;
-  gap: .28rem;
-  min-height: 4.6rem;
-  padding: 1rem 1.15rem 1rem 0;
-  color: var(--ink);
-  text-decoration: none;
-  opacity: 0;
-  transform: translateY(1.25rem);
-  transition:
-    opacity 800ms var(--e-out) var(--dl, 0ms),
-    transform 800ms var(--e-out) var(--dl, 0ms);
-}
 body.intro-done .notice { opacity: 1; transform: none; }
-.notice:nth-child(1) { --dl: 880ms; }
-.notice:nth-child(2) { --dl: 950ms; }
-.notice:nth-child(3) { --dl: 1020ms; }
-.notice + .notice { padding-left: 1.15rem; border-left: 1px solid var(--rule); }
-.notice::before {
-  content: '';
-  position: absolute;
-  top: -1px; left: 0; right: 0;
-  height: 1px;
-  background: var(--teal);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 560ms var(--e-out);
-}
-.notice:hover::before, .notice:focus-visible::before { transform: scaleX(1); }
-.notice small {
-  color: var(--teal);
-  font-size: var(--t-xxs);
-  font-weight: 800;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-.notice strong {
-  max-width: 9.5rem;
-  font-size: .72rem;
-  font-weight: 600;
-  line-height: 1.35;
-  transition: transform 460ms var(--e-out), color 260ms;
-}
-.notice:hover strong, .notice:focus-visible strong { transform: translateX(.3rem); color: var(--teal-pale); }
-.notice b { display: none; }
 
 /* CHAPTER SHELL */
 .chapter {
@@ -1138,7 +1141,6 @@ body.intro-done .notice { opacity: 1; transform: none; }
   .letter__portrait img { aspect-ratio: 4 / 5; }
   .letter__portrait figcaption { padding-top: 0; }
   .hero__type { width: min(46rem, 68vw); }
-  .notices { width: min(44rem, 68vw); }
 }
 
 @media (max-width: 900px) {
@@ -1195,35 +1197,6 @@ body.intro-done .notice { opacity: 1; transform: none; }
   .hero__orbit { right: -6rem; top: 62%; width: 16rem; }
   .hero__atlas { right: -20%; width: 150vw; }
 
-  .notices {
-    position: static;
-    display: grid;
-    width: 100%;
-    max-width: 26rem;
-    margin: clamp(2.5rem, 8vw, 3.5rem) auto 0;
-    transform: none;
-    opacity: 1;
-  }
-  .notice {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: .15rem 1rem;
-    min-height: 3.75rem;
-    padding: .95rem 0;
-    text-align: left;
-  }
-  .notice + .notice { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
-  .notice small { grid-column: 1; font-size: var(--t-xs); letter-spacing: .12em; }
-  .notice strong { grid-column: 1; max-width: none; font-size: var(--t-md); }
-  .notice b {
-    display: block;
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    color: var(--teal);
-    font-size: 1.1rem;
-    font-weight: 400;
-  }
-
   .masthead { grid-template-columns: 3rem 1fr; row-gap: .75rem; }
   .masthead p { grid-column: 2; max-width: none; text-align: left; }
 }
@@ -1238,6 +1211,6 @@ body.intro-done .notice { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   .deck__card, .hero__emblem, .hero__orbit { animation: none; }
   body .deck__card { opacity: var(--band-o); }
-  .hero__type > *, .notice, .hero__title .line > span { opacity: 1; transform: none; }
+  .hero__type > *, .hero__title .line > span { opacity: 1; transform: none; }
   .nav.is-retreated { transform: none; }
 }

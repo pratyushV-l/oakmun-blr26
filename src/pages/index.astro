@@ -97,7 +97,7 @@ const introAssets = [
     <div class="nav__end">
       <a class="nav__cta" href="#register" data-magnetic="7">Register <span>↗</span></a>
       <button class="nav__toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="menu" aria-label="Open menu">
-        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
     </div>
   </header>
@@ -126,15 +126,18 @@ const introAssets = [
 
       <div class="deck" aria-hidden="true">
         {deckCards.map(({ committee, image, place }, index) => (
-          <article
+          <a
             class={`deck__card deck__card--b${place.band}`}
+            href={`/committees/${committee.id}`}
+            tabindex="-1"
             style={`--x:${place.x}%; --y:${place.y}%; --r:${place.r}deg; --i:${index};`}
           >
             <img class="deck__photo" src={image} alt="" />
             <img class="deck__mark" src="/oakmun-mark.svg" alt="" />
             <span>{committee.category.toUpperCase()}</span>
             <strong>{committee.code}</strong>
-          </article>
+            <em class="deck__more">View more <i aria-hidden="true">↗</i></em>
+          </a>
         ))}
       </div>
 
@@ -158,11 +161,6 @@ const introAssets = [
         </div>
       </div>
 
-      <aside class="notices" aria-label="Conference updates">
-        <a href="#register" class="notice"><small>REGISTRATION</small><strong>Delegate applications</strong><b aria-hidden="true">→</b></a>
-        <a href="/committees" class="notice"><small>EXPLORE</small><strong>Committee catalogue</strong><b aria-hidden="true">→</b></a>
-        <a href="#resources" class="notice"><small>COMING SOON</small><strong>Conference resources</strong><b aria-hidden="true">→</b></a>
-      </aside>
 
       <div class="hero__atlas-legend" aria-hidden="true">
         <p>🇮🇳&nbsp; 🇺🇳&nbsp; 🇿🇦&nbsp; 🇧🇷&nbsp; 🇯🇵&nbsp; 🇫🇷&nbsp; 🇩🇪&nbsp; 🇲🇽&nbsp; 🇰🇪&nbsp; 🇨🇦&nbsp; 🇰🇷&nbsp; 🇦🇺&nbsp; 🇪🇬&nbsp; 🇮🇩&nbsp; 🇦🇷&nbsp; 🇳🇬&nbsp; 🇹🇭&nbsp; 🇹🇷</p>

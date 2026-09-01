@@ -53,4 +53,23 @@ export const letters: Letter[] = [
       'See you at OAKMUN 2026.',
     ],
   },
+  {
+    id: 'ryan-dennis-gomez',
+    name: 'Ryan Dennis Gomez',
+    role: 'Director-General',
+    signOff: 'Director-General, OAKMUN 2026',
+    portrait: '/secretariat-imgs/ryan-dennis-gomez.jpg',
+    paragraphs: [
+      'Dear Delegates',
+      'It is with honour and excitement that I welcome you to the 11th iteration of Oakridge Model United Nations, now for the second time, at the international stage.',
+      'With its initial institutionalization back in 1945, the United Nations has served as a beacon of hope, cooperation and action among the international community. We, your director generals, can only ever hope to replicate a semblance of its significance through this Model United Nations Conference.',
+      'I’ve started my Model UN career with the Oakridge JMUN back in 2021, leading me to build a strong and successful careers as debaters and beyond. I, Ryan Gomez, have attended and chaired at over 20 conferences, with placements in conferences such as Harvard Model United Nations, NIS Cambodia Model United Nations, SJPUC, GWHMUN, SOIMUN and over a dozen more and a gold medalist at Yale for debate.',
+      'The plethora of skills that your form, from debate and confidence in delivering beliefs you may not personally believe in, to the rigorous process of legal research, quick on-spot thinking and problem solving is something you develop in Model UN; such an amoglamation can not be found anywhere else.',
+      'Moreover, Model UN allows you to form connections with people around the world and memories far beyond the committee sessions.',
+      'OakMUN 2026 offers a total of 12 committees with each being carefully handpicked and tailored for you to tackled a real world issue that is (or was) faced with productive debate and policy construction. As delegates, you voice hold the power to change the world far beyond the words written on the resolution, directing the flow of history and the outcomes of billions, that place their hope on you.',
+      'We encourage you whether you’re an experienced veteran or a first timer to speak your heart out, and put forward your creativity in problem solving and leadership, through your portfoli as you address any of the exquisitely complex and exciting agendas that we have picked out for you.',
+      'With that said, put this letter away and start the hours of research and prep that await you. The late nights, the early mornings, the times you reiterate your speech in your room with a stopwatch in the corner, get ready for the exciting global stage that awaits you.',
+      'Welcome to OakMun 2026. I hope to see you soon',
+    ],
+  },
 ];
