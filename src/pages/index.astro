@@ -3,6 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import { committees } from '../data/committees';
 import { letters } from '../data/secretariat';
 import SiteFooter from '../components/SiteFooter.astro';
+import { conference } from '../data/conference';
+import { getCountdownParts } from '../scripts/countdown';
+
+const countdown = getCountdownParts(Date.parse(conference.countdownTarget));
+const countdownLabels = { days: 'DAYS', hours: 'HOURS', minutes: 'MINS', seconds: 'SECS' };
 
 const deckImages = [
   '/gallery/delegates.jpg', '/gallery/flags-debate.jpg', '/gallery/moderator.jpg', '/gallery/flags-room.jpg',
@@ -148,16 +153,18 @@ const introAssets = [
           <span class="line"><span>OAKMUN</span></span>
           <span class="line line--accent"><span>BLR 26</span></span>
         </h1>
-        <p class="hero__dates">DATES TO BE ANNOUNCED</p>
+        <p class="hero__dates">{conference.dates.toUpperCase()}</p>
         <div class="hero__actions">
           <a class="btn btn--solid" href="#register" data-magnetic="9">Register <span>→</span></a>
           <a class="btn" href="/committees" data-magnetic="9">Explore committees</a>
         </div>
-        <div class="countdown">
-          <span><b class="u-index">--</b>DAYS</span><i>:</i>
-          <span><b class="u-index">--</b>HOURS</span><i>:</i>
-          <span><b class="u-index">--</b>MINS</span><i>:</i>
-          <span><b class="u-index">--</b>SECS</span>
+        <div class="countdown" data-countdown-target={conference.countdownTarget} role="timer" aria-live="off" aria-label="Countdown to December 17, 2026 at midnight IST">
+          {Object.entries(countdownLabels).map(([unit, label], index) => (
+            <>
+              {index > 0 && <i aria-hidden="true">:</i>}
+              <span><b class="u-index" data-countdown-unit={unit}>{String(countdown[unit as keyof typeof countdown]).padStart(2, '0')}</b>{label}</span>
+            </>
+          ))}
         </div>
       </div>
 
@@ -248,7 +255,7 @@ const introAssets = [
       <header class="masthead">
         <span class="u-index" data-reveal="up">03</span>
         <h2 data-split data-reveal="fade">SCHEDULE</h2>
-        <p data-reveal="up" data-reveal-delay="200">DATES TO BE ANNOUNCED</p>
+        <p data-reveal="up" data-reveal-delay="200">{conference.dates.toUpperCase()} · Detailed timetable coming soon</p>
       </header>
       <div class="undecided" data-scrub="cover" data-reveal="mask-up">
         <div class="undecided__field" aria-hidden="true">
@@ -257,7 +264,7 @@ const introAssets = [
           <img class="undecided__emblem" src="/oakmun-mark.svg" alt="" data-parallax="0.22" />
         </div>
         <span class="undecided__ghost" aria-hidden="true">26</span>
-        <strong class="undecided__word">UNDECIDED</strong>
+        <strong class="undecided__word">COMING<br />SOON</strong>
       </div>
     </section>
 
@@ -315,6 +322,10 @@ const introAssets = [
       </header>
       <div class="faq__list" data-accordion data-stagger>
         <details data-reveal="up">
+          <summary>When is OAKMUN BLR 26?<span aria-hidden="true">+</span></summary>
+          <div data-accordion-panel><p>OAKMUN BLR 26 takes place on {conference.dates}. The detailed timetable will be announced soon.</p></div>
+        </details>
+        <details data-reveal="up">
           <summary>What is the registration deadline?<span aria-hidden="true">+</span></summary>
           <div data-accordion-panel><p>Registration closes two weeks before the conference date. Early registration is recommended as spots are limited.</p></div>
         </details>
@@ -340,7 +351,9 @@ const introAssets = [
     import { initMotion } from '../scripts/motion';
     import { initNav } from '../scripts/nav';
     import { initIntro } from '../scripts/intro';
+    import { initCountdown } from '../scripts/countdown';
 
+    initCountdown(document.querySelector<HTMLElement>('[data-countdown-target]'));
     const intro = document.getElementById('intro');
     initIntro(intro, intro?.dataset.assets?.split(',') ?? []);
     initNav(document.getElementById('nav'));
