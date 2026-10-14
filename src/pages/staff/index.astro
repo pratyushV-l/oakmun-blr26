@@ -1,0 +1,116 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Delegates | OAKMUN BLR 26 Staff">
+  <main class="ops-shell ops-wide">
+    <header class="ops-header"><a class="ops-brand" href="/"><img src="/oakmun-mark.svg" alt="" /> OAKMUN <span>BLR 26 · CHECK-IN</span></a><nav><a class="is-active" href="#delegates">Delegates</a><a href="#attendance">Attendance scanner</a></nav></header>
+    <section class="ops-heading"><p class="ops-kicker">REGISTRATION DESK</p><h1>Delegates</h1><p class="ops-muted">Add delegates and create their QR codes.</p></section>
+    <div class="ops-grid">
+      <section class="ops-card"><h2>Add delegate</h2><form id="delegate-form" class="ops-form"><label>Full name<input name="name" maxlength="120" required /></label><label>Email address<input name="email" type="email" required /></label><button class="ops-button" type="submit">Save & create QR <span>→</span></button><p class="ops-message" id="delegate-message" role="status"></p></form></section>
+      <section class="ops-card ops-stats"><p class="ops-kicker">ON THE LIST</p><strong id="delegate-count">—</strong><span>registered delegates</span><a class="ops-button ops-button--secondary" href="#attendance">Open attendance scanner →</a></section>
+    </div>
+    <section class="ops-card ops-qr-panel" id="qr-panel" hidden><div><p class="ops-kicker">DELEGATE QR CODE</p><h2 id="qr-name">QR code ready</h2><p class="ops-muted" id="qr-email"></p><p class="ops-muted">Download or print this QR and give it to the delegate. Keep a copy for check-in.</p><a class="ops-button" id="qr-download" download="oakmun-delegate-qr.png">Download QR <span>↓</span></a></div><img id="delegate-qr" alt="Delegate QR code" width="240" height="240" /></section>
+    <section class="ops-card ops-list" id="delegates"><div class="ops-list-head"><div><p class="ops-kicker">REGISTRATION ROSTER</p><h2>Recent delegates</h2></div><button id="refresh" class="ops-refresh" type="button">Refresh ↻</button></div><div class="ops-table-wrap"><table><thead><tr><th>Delegate</th><th>Email</th><th>Attendance</th><th>Registered</th></tr></thead><tbody id="delegate-rows"><tr><td colspan="4">Loading…</td></tr></tbody></table></div><p id="list-message" class="ops-message" role="status"></p></section>
+    <section class="ops-card ops-scanner" id="attendance"><p class="ops-kicker">VOLUNTEER CHECK-IN</p><h2>Attendance scanner</h2><p class="ops-muted">Choose the conference day, then scan the delegate QR.</p><label class="ops-day-label" for="conference-day">Conference day</label><select id="conference-day"><option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option></select><div class="ops-camera"><video id="camera" muted playsinline></video><div class="ops-camera-empty" id="camera-empty"><span>▦</span><p>Camera preview will appear here</p></div></div><div class="ops-actions"><button class="ops-button" id="start-camera" type="button">Start camera <span>→</span></button><button class="ops-button ops-button--secondary" id="stop-camera" type="button" disabled>Stop camera</button><label class="ops-upload">Scan an image<input id="qr-file" type="file" accept="image/*" /></label></div><p class="ops-message" id="camera-message" role="status">Camera access is needed for live scanning.</p><div class="ops-result" aria-live="polite" id="scan-result"><h2>Ready when you are</h2><p class="ops-muted">Duplicate scans are prevented for each day.</p></div></section>
+  </main>
+  <script>
+    import QRCode from 'qrcode';
+    import { BrowserMultiFormatReader } from '@zxing/browser';
+    const rows = document.querySelector<HTMLTableSectionElement>('#delegate-rows');
+    const count = document.querySelector<HTMLElement>('#delegate-count');
+    const listMessage = document.querySelector<HTMLElement>('#list-message');
+    const refresh = async () => {
+      const response = await fetch('/api/staff/delegates');
+      const result = await response.json();
+      if (!response.ok) { location.href = '/staff'; return; }
+      if (count) count.textContent = String(result.delegates.length);
+      if (!rows) return;
+      rows.replaceChildren();
+      for (const delegate of result.delegates) {
+        const tr = document.createElement('tr');
+        const present = new Set((delegate.attendance ?? []).map((entry: { conference_day: number }) => entry.conference_day));
+        const cells = [delegate.name, delegate.email, `Day 1 ${present.has(1) ? '✓' : '·'}   Day 2 ${present.has(2) ? '✓' : '·'}   Day 3 ${present.has(3) ? '✓' : '·'}`, new Date(delegate.created_at).toLocaleDateString()];
+        for (const value of cells) { const td = document.createElement('td'); td.textContent = value; tr.append(td); }
+        rows.append(tr);
+      }
+      if (!result.delegates.length) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 4; td.textContent = 'No delegates added yet.'; tr.append(td); rows.append(tr); }
+    };
+    const form = document.querySelector<HTMLFormElement>('#delegate-form');
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const message = document.querySelector<HTMLElement>('#delegate-message');
+      const button = form.querySelector<HTMLButtonElement>('button[type=submit]');
+      if (button) button.disabled = true;
+      const values = new FormData(form);
+      const response = await fetch('/api/staff/delegates', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: values.get('name'), email: values.get('email') }) });
+      const result = await response.json();
+      if (message) message.textContent = response.ok ? `Added ${result.delegate.name}. The QR code is ready below.` : result.error;
+      if (response.ok) {
+        const image = document.querySelector<HTMLImageElement>('#delegate-qr');
+        const download = document.querySelector<HTMLAnchorElement>('#qr-download');
+        const panel = document.querySelector<HTMLElement>('#qr-panel');
+        if (image && download && panel) {
+          const dataUrl = await QRCode.toDataURL(result.qrToken, { width: 480, margin: 2, errorCorrectionLevel: 'H' });
+          image.src = dataUrl; download.href = dataUrl;
+          document.querySelector<HTMLElement>('#qr-name')!.textContent = result.delegate.name;
+          document.querySelector<HTMLElement>('#qr-email')!.textContent = result.delegate.email;
+          panel.hidden = false; panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        form.reset(); await refresh();
+      }
+      if (button) button.disabled = false;
+    });
+    document.querySelector('#refresh')?.addEventListener('click', refresh);
+    void refresh();
+
+    const reader = new BrowserMultiFormatReader();
+    const video = document.querySelector<HTMLVideoElement>('#camera');
+    const empty = document.querySelector<HTMLElement>('#camera-empty');
+    const start = document.querySelector<HTMLButtonElement>('#start-camera');
+    const stop = document.querySelector<HTMLButtonElement>('#stop-camera');
+    const scanResult = document.querySelector<HTMLElement>('#scan-result');
+    const cameraMessage = document.querySelector<HTMLElement>('#camera-message');
+    let controls: { stop: () => void } | undefined;
+    let busy = false;
+    const showResult = (title: string, detail: string, kind: string) => {
+      if (!scanResult) return;
+      scanResult.replaceChildren();
+      const heading = document.createElement('h2'); heading.textContent = title; heading.className = kind;
+      const paragraph = document.createElement('p'); paragraph.textContent = detail;
+      scanResult.append(heading, paragraph);
+    };
+    const submitToken = async (token: string) => {
+      if (busy) return;
+      busy = true;
+      const day = document.querySelector<HTMLSelectElement>('#conference-day')?.value ?? '1';
+      const response = await fetch('/api/staff/check-in', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, day }) });
+      const data = await response.json();
+      if (response.ok && data.delegate) {
+        const already = data.status === 'already_checked_in';
+        showResult(already ? 'Already checked in' : 'Check-in complete', `${data.delegate.name} · ${data.delegate.email} · Day ${day}${data.checkedInAt ? ` · ${new Date(data.checkedInAt).toLocaleTimeString()}` : ''}`, already ? 'ops-result-warn' : 'ops-result-ok');
+      } else showResult('QR not accepted', data.error ?? 'Please try again.', 'ops-result-error');
+      window.setTimeout(() => { busy = false; }, 1400);
+    };
+    start?.addEventListener('click', async () => {
+      try {
+        controls = await reader.decodeFromVideoDevice(undefined, video!, (decoded) => { if (decoded) void submitToken(decoded.getText()); });
+        if (empty) empty.hidden = true;
+        if (start) start.disabled = true;
+        if (stop) stop.disabled = false;
+        if (cameraMessage) cameraMessage.textContent = 'Camera is active. Hold the QR code inside the frame.';
+      } catch (error) { if (cameraMessage) cameraMessage.textContent = error instanceof Error ? error.message : 'Could not open camera.'; }
+    });
+    stop?.addEventListener('click', () => { controls?.stop(); controls = undefined; if (start) start.disabled = false; if (stop) stop.disabled = true; if (empty) empty.hidden = false; });
+    document.querySelector<HTMLInputElement>('#qr-file')?.addEventListener('change', async (event) => {
+      const input = event.currentTarget as HTMLInputElement;
+      const file = input.files?.[0];
+      if (!file) return;
+      const imageUrl = URL.createObjectURL(file);
+      try { const decoded = await reader.decodeFromImageUrl(imageUrl); await submitToken(decoded.getText()); }
+      catch { showResult('Could not read QR', 'Try a clearer image or use the camera scanner.', 'ops-result-error'); }
+      finally { URL.revokeObjectURL(imageUrl); input.value = ''; }
+    });
+    window.addEventListener('pagehide', () => controls?.stop());
+  </script>
+</Layout>
+

@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { committees } from '../data/committees';
 import SiteFooter from '../components/SiteFooter.astro';
+import CommitteeTransition from '../components/CommitteeTransition.astro';
 
 const initials = (value: string) =>
   value
@@ -98,6 +99,7 @@ const searchTerms = (committee: (typeof committees)[number]) =>
               class:list={['cat-card', { 'cat-card--classified': committee.confidential }]}
               href={`/committees/${committee.id}`}
               data-committee-card
+              data-committee-transition
               data-reveal="rise"
               data-confidential={committee.confidential ? 'true' : 'false'}
               data-name={committee.name}
@@ -130,11 +132,14 @@ const searchTerms = (committee: (typeof committees)[number]) =>
     <!-- FOOTER -->
     <SiteFooter backHref="/" backLabel="Return home" />
   </div>
+  <CommitteeTransition />
 
   <script>
     import { initMotion } from '../scripts/motion';
     import { initNav } from '../scripts/nav';
+    import { initCommitteeTransition } from '../scripts/committee-transition';
 
+    initCommitteeTransition();
     initNav(document.getElementById('nav'));
     initMotion(document);
     document.body.classList.add('intro-done');

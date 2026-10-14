@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { committees, type Committee } from '../../data/committees';
+import CommitteeTransition from '../../components/CommitteeTransition.astro';
 
 export const prerender = true;
 
@@ -167,11 +168,11 @@ const facts = isRestricted
 
       <!-- ADJACENT COMMITTEES -->
       <nav class="cm-jump" aria-label="Other committees">
-        <a class="cm-jump__link cm-jump__link--prev" href={`/committees/${prev.id}`}>
+        <a class="cm-jump__link cm-jump__link--prev" href={`/committees/${prev.id}`} data-committee-transition>
           <small>Previous</small>
           <strong>{prev.confidential ? 'Committee X' : prev.code}</strong>
         </a>
-        <a class="cm-jump__link cm-jump__link--next" href={`/committees/${next.id}`}>
+        <a class="cm-jump__link cm-jump__link--next" href={`/committees/${next.id}`} data-committee-transition>
           <small>Next</small>
           <strong>{next.confidential ? 'Committee X' : next.code}</strong>
         </a>
@@ -180,11 +181,14 @@ const facts = isRestricted
 
     <SiteFooter backHref="/committees" backLabel="All committees" />
   </div>
+  <CommitteeTransition />
 
   <script>
     import { initMotion } from '../../scripts/motion';
     import { initNav } from '../../scripts/nav';
+    import { initCommitteeTransition } from '../../scripts/committee-transition';
 
+    initCommitteeTransition();
     initNav(document.getElementById('nav'));
     initMotion(document);
     document.body.classList.add('intro-done');

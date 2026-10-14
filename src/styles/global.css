@@ -9,3 +9,5 @@
 @import "./committees.css";
 @import "./about.css";
 @import "./footer.css";
+@import './attendance.css';
+@import './attendance-qr.css';

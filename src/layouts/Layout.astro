@@ -19,6 +19,13 @@ const { title = 'OAKMUN BLR 26' } = Astro.props;
       rel="stylesheet"
     />
     <link rel="preload" as="image" href="/oakmun-mark.svg" />
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem('oakmun-committee-transition') === '1') {
+          document.documentElement.classList.add('has-committee-transition-entry');
+        }
+      } catch {}
+    </script>
     <title>{title}</title>
   </head>
   <body>
