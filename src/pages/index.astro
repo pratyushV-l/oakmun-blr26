@@ -12,25 +12,30 @@ const countdownLabels = { days: 'DAYS', hours: 'HOURS', minutes: 'MINS', seconds
 const deckImages = [
   '/gallery/delegates.jpg', '/gallery/flags-debate.jpg', '/gallery/moderator.jpg', '/gallery/flags-room.jpg',
   '/gallery/auditorium.jpg', '/gallery/delegates.jpg', '/gallery/flags-debate.jpg', '/gallery/flags-room.jpg',
-  '/gallery/moderator.jpg', '/gallery/auditorium.jpg', '/gallery/delegates.jpg',
+  '/gallery/moderator.jpg', '/gallery/auditorium.jpg', '/gallery/delegates.jpg', '/gallery/flags-debate.jpg',
 ];
 
+// Angles around the title ring, clockwise from 3 o'clock.
 const deckPlacements = [
-  { x: 58, y: 11, r: -9,  band: 1 },
-  { x: 92, y: 22, r: 12,  band: 1 },
-  { x: 49, y: 45, r: -5,  band: 1 },
-  { x: 66, y: 84, r: 8,   band: 1 },
-  { x: 75, y: 9,  r: -6,  band: 2 },
-  { x: 96, y: 61, r: 10,  band: 2 },
-  { x: 55, y: 69, r: 11,  band: 2 },
-  { x: 84, y: 88, r: -12, band: 2 },
-  { x: 64, y: 35, r: -3,  band: 3 },
-  { x: 89, y: 41, r: 6,   band: 3 },
-  { x: 72, y: 63, r: -8,  band: 3 },
-];
+  { a: -58, r: 9,   band: 1 },
+  { a: -30, r: -6,  band: 2 },
+  { a: -4,  r: 5,   band: 1 },
+  { a: 20,  r: 7,   band: 3 },
+  { a: 46,  r: -9,  band: 2 },
+  { a: 70,  r: 5,   band: 1 },
+  { a: 110, r: -7,  band: 1 },
+  { a: 136, r: 8,   band: 3 },
+  { a: 162, r: -5,  band: 1 },
+  { a: 190, r: 6,   band: 2 },
+  { a: 218, r: -10, band: 3 },
+  { a: 244, r: 4,   band: 1 },
+].map((place) => ({
+  ...place,
+  ux: +Math.cos((place.a * Math.PI) / 180).toFixed(3),
+  uy: +Math.sin((place.a * Math.PI) / 180).toFixed(3),
+}));
 
 const deckCards = committees
-  .filter((committee) => !committee.confidential)
   .map((committee, index) => ({
     committee,
     image: deckImages[index],
@@ -120,44 +125,45 @@ const introAssets = [
 
   <main class="site" id="main">
     <!-- HERO -->
-    <section class="hero" id="top" data-scrub="out" data-spotlight>
+    <div class="hero-runway" data-scrub="pin">
+    <section class="hero" id="top" data-spotlight>
       <div class="hero__field" aria-hidden="true">
         <div class="hero__grid"></div>
         <img class="hero__atlas" src="/world-map.svg" alt="" />
         <span class="hero__watermark">26</span>
-        <span class="hero__orbit"><i></i><b></b></span>
+        <span class="hero__halo"></span>
+        <canvas class="hero__depth" data-depth-field></canvas>
         <div class="spotlight"></div>
       </div>
 
       <div class="deck" aria-hidden="true">
         {deckCards.map(({ committee, image, place }, index) => (
-          <a
-            class={`deck__card deck__card--b${place.band}`}
-            href={`/committees/${committee.id}`}
-            tabindex="-1"
-            style={`--x:${place.x}%; --y:${place.y}%; --r:${place.r}deg; --i:${index};`}
+          <div
+            class={`deck__slot deck__slot--b${place.band}`}
+            style={`--ux:${place.ux}; --uy:${place.uy}; --r:${place.r}deg; --i:${index};`}
           >
-            <img class="deck__photo" src={image} alt="" />
-            <img class="deck__mark" src="/oakmun-mark.svg" alt="" />
-            <span>{committee.category.toUpperCase()}</span>
-            <strong>{committee.code}</strong>
-            <em class="deck__more">View more <i aria-hidden="true">↗</i></em>
-          </a>
+            <a
+              class:list={['deck__card', { 'deck__card--classified': committee.confidential }]}
+              href={`/committees/${committee.id}`}
+              tabindex="-1"
+            >
+              <img class="deck__photo" src={committee.confidential ? committee.image : image} alt="" />
+              <img class="deck__mark" src="/oakmun-mark.svg" alt="" />
+              <span>{committee.confidential ? 'CLASSIFIED' : committee.category.toUpperCase()}</span>
+              <strong>{committee.code}</strong>
+              <em class="deck__more">View more <i aria-hidden="true">↗</i></em>
+            </a>
+          </div>
         ))}
       </div>
 
       <div class="hero__type">
         <img class="hero__emblem" src="/oakmun-mark.svg" alt="OAKMUN emblem" />
-        <p class="hero__eyebrow">OAKMUN BLR 26 &nbsp;·&nbsp; BENGALURU, INDIA</p>
         <h1 class="hero__title">
           <span class="line"><span>OAKMUN</span></span>
           <span class="line line--accent"><span>BLR 26</span></span>
         </h1>
         <p class="hero__dates">{conference.dates.toUpperCase()}</p>
-        <div class="hero__actions">
-          <a class="btn btn--solid" href="#register" data-magnetic="9">Register <span>→</span></a>
-          <a class="btn" href="/committees" data-magnetic="9">Explore committees</a>
-        </div>
         <div class="countdown" data-countdown-target={conference.countdownTarget} role="timer" aria-live="off" aria-label="Countdown to December 17, 2026 at midnight IST">
           {Object.entries(countdownLabels).map(([unit, label], index) => (
             <>
@@ -174,6 +180,7 @@ const introAssets = [
         <p>🇮🇳&nbsp; 🇺🇳&nbsp; 🇿🇦&nbsp; 🇧🇷&nbsp; 🇯🇵&nbsp; 🇫🇷&nbsp; 🇩🇪&nbsp; 🇲🇽&nbsp; 🇰🇪&nbsp; 🇨🇦&nbsp; 🇰🇷&nbsp; 🇦🇺&nbsp; 🇪🇬&nbsp; 🇮🇩&nbsp; 🇦🇷&nbsp; 🇳🇬&nbsp; 🇹🇭&nbsp; 🇹🇷</p>
       </div>
     </section>
+    </div>
 
     <!-- 01 COMMITTEES -->
     <section class="chapter rail-section" id="committees" data-rail-section data-scrub="pin">
@@ -352,12 +359,25 @@ const introAssets = [
     import { initNav } from '../scripts/nav';
     import { initIntro } from '../scripts/intro';
     import { initCountdown } from '../scripts/countdown';
+    import { initDepthField } from '../scripts/depthfield';
 
     initCountdown(document.querySelector<HTMLElement>('[data-countdown-target]'));
     const intro = document.getElementById('intro');
     initIntro(intro, intro?.dataset.assets?.split(',') ?? []);
     initNav(document.getElementById('nav'));
     initMotion(document);
+    initDepthField(
+      document.querySelector('[data-depth-field]'),
+      document.getElementById('top'),
+      document.querySelector('.hero-runway'),
+    );
+
+    // Cards only take clicks once they've landed.
+    document.querySelector('.deck')?.addEventListener('animationend', (event) => {
+      if ((event as AnimationEvent).animationName === 'deck-in') {
+        (event.target as HTMLElement).classList.add('is-live');
+      }
+    });
 
     /* SKIP LETTERS */
     const skip = document.querySelector<HTMLElement>('[data-letters-skip]');

@@ -11,10 +11,6 @@
   z-index: 0;
   inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(var(--sig-06) 1px, transparent 1px),
-    linear-gradient(90deg, var(--sig-06) 1px, transparent 1px);
-  background-size: 5.5rem 5.5rem;
   mask-image: radial-gradient(125% 75% at 30% 0%, #000 0%, transparent 70%);
 }
 .about__main, .about .foot { position: relative; z-index: 1; }
@@ -35,10 +31,6 @@
 .ab-hero__grid {
   position: absolute;
   inset: -15%;
-  background-image:
-    linear-gradient(var(--sig-06) 1px, transparent 1px),
-    linear-gradient(90deg, var(--sig-06) 1px, transparent 1px);
-  background-size: 4rem 4rem;
   mask-image: radial-gradient(110% 80% at 20% 40%, #000 5%, transparent 72%);
   transform: translateY(calc(var(--p, 0) * 14vh));
 }
