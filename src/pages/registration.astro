@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const guides = [
+  {
+    title: 'Internal Delegate Guide',
+    audience: 'For delegates from Oakridge International School applying through the school.',
+    thumbnail: '/guides/internal-delegate-thumb.svg',
+    href: '/guides/internal-delegate.pdf',
+  },
+  {
+    title: 'External Delegate Guide',
+    audience: 'For delegates joining OAKMUN from outside Oakridge International School.',
+    thumbnail: '/guides/external-delegate-thumb.svg',
+    href: '/guides/external-delegate.pdf',
+  },
+  {
+    title: 'Head Delegate Guide',
+    audience: 'For the student leading a school delegation and coordinating registrations.',
+    thumbnail: '/guides/head-delegate-thumb.svg',
+    href: '/guides/head-delegate.pdf',
+  },
+  {
+    title: 'Faculty Registration Guide',
+    audience: 'For faculty advisors supporting and registering their school delegation.',
+    thumbnail: '/guides/faculty-thumb.svg',
+    href: '/guides/faculty.pdf',
+  },
+];
+---
+<Layout title="Registration | OAKMUN BLR 26">
+  <main class="registration">
+    <div class="registration__shell">
+      <a class="registration__back" href="/">← Back to OAKMUN BLR 26</a>
+      <header class="registration__mast">
+        <p class="u-micro registration__eyebrow">OAKMUN BLR 26 · REGISTRATION</p>
+        <h1 class="registration__title">Registration.</h1>
+        <p class="registration__intro">Before you register, understand the process and choose the guide that matches your role.</p>
+        <p class="registration__partnership">We’ve partnered with Gavelling to handle OAKMUN registration, applications, and allocations for a smoother conference experience.</p>
+      </header>
+
+      <div class="registration__layout">
+        <div class="registration__main">
+          <section class="registration__guides" aria-labelledby="guides-title">
+            <p class="u-micro">IMPORTANT RESOURCES</p>
+            <h2 id="guides-title">Choose your registration guide</h2>
+            <div class="registration__guide-grid">
+              {guides.map((guide) => (
+                <a class="registration__guide" href={guide.href} target="_blank" rel="noopener noreferrer">
+                  <img src={guide.thumbnail} alt="" />
+                  <div class="registration__guide-content">
+                    <h3>{guide.title}</h3>
+                    <p>{guide.audience}</p>
+                    <span>Open guide ↗</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside class="registration__action">
+          <p class="u-micro">READY TO BEGIN?</p>
+          <h2>Register through Gavelling</h2>
+          <p>Once you’ve read the relevant guide, use the button below to start your OAKMUN BLR 26 registration on Gavelling.com.</p>
+          <a class="btn btn--solid" href="https://gavelling.com/conferences/oakmun2026" target="_blank" rel="noopener noreferrer">Continue to Gavelling <span>↗</span></a>
+        </aside>
+      </div>
+    </div>
+  </main>
+</Layout>
