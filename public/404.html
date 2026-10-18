@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OAKMUN BLR 26</title>
+    <script>
+      (() => {
+        const adminPath = /^\/qrcodeadmindashboard(?:\/|$)/;
+        if (!adminPath.test(window.location.pathname)) return;
+
+        const target = new URL('https://oakmun-blr26.vercel.app');
+        target.pathname = window.location.pathname;
+        target.search = window.location.search;
+        target.hash = window.location.hash;
+        window.location.replace(target.href);
+      })();
+    </script>
+    <style>
+      :root { color-scheme: dark; font-family: Arial, sans-serif; }
+      body { display: grid; min-height: 100vh; place-items: center; margin: 0; background: #061a33; color: #f4f8f8; }
+      main { max-width: 32rem; padding: 2rem; text-align: center; }
+      a { color: #67c4df; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Page not found</h1>
+      <p>The requested OAKMUN page could not be found.</p>
+      <a href="/">Return to OAKMUN</a>
+    </main>
+  </body>
+</html>
