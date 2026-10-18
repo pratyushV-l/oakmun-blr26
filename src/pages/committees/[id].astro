@@ -157,14 +157,14 @@ const facts = isRestricted
         <div class="cm-board__head">
           <span class="u-index u-badge" data-reveal="up">03</span>
           <h2 id="eb-title" data-split data-reveal="fade">Executive Board</h2>
-          <p data-reveal="up" data-reveal-delay="160">To be announced</p>
+          <p data-reveal="up" data-reveal-delay="160">Conference leadership</p>
         </div>
         <div class="cm-board__grid" data-stagger>
-          {['Chair', 'Vice-Chair', 'Director'].map((role) => (
+          {committee.executiveBoard.map((member) => (
             <article class="cm-seat" data-reveal="rise">
               <span class="cm-seat__frame" aria-hidden="true"><i class="skeleton"></i></span>
-              <strong>To be announced</strong>
-              <small>{role}</small>
+              <strong>{member.name}</strong>
+              <small>{member.role}</small>
             </article>
           ))}
         </div>
