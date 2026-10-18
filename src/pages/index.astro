@@ -4,7 +4,19 @@ import { committees } from '../data/committees';
 import { letters } from '../data/secretariat';
 import SiteFooter from '../components/SiteFooter.astro';
 import { conference } from '../data/conference';
+import { scheduleDays, type ScheduleKind } from '../data/schedule';
 import { getCountdownParts } from '../scripts/countdown';
+
+const scheduleKindLabels: Record<ScheduleKind, string> = {
+  logistics: 'Logistics',
+  ceremony: 'Ceremony',
+  break: 'Break',
+  committee: 'Session',
+  meal: 'Meal',
+  social: 'Social',
+  venue: 'Transit',
+  dispersal: 'Dispersal',
+};
 
 const countdown = getCountdownParts(Date.parse(conference.countdownTarget));
 const countdownLabels = { days: 'DAYS', hours: 'HOURS', minutes: 'MINS', seconds: 'SECS' };
@@ -105,7 +117,8 @@ const introAssets = [
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav__end">
-      <a class="nav__cta" href="#register" data-magnetic="7">Register <span>↗</span></a>
+      <a class="nav__cta nav__cta--qr" href="/staff#delegates" data-magnetic="7"><svg class="qr-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1" y="1" width="5" height="5" fill="none" stroke="currentColor" stroke-width="1.3" /><rect x="10" y="1" width="5" height="5" fill="none" stroke="currentColor" stroke-width="1.3" /><rect x="1" y="10" width="5" height="5" fill="none" stroke="currentColor" stroke-width="1.3" /><rect x="10" y="10" width="2" height="2" fill="currentColor" /><rect x="13" y="10" width="2" height="2" fill="currentColor" /><rect x="10" y="13" width="2" height="2" fill="currentColor" /><rect x="13" y="13" width="2" height="2" fill="currentColor" /></svg><span class="qr-icon-label">Get Your QR</span></a>
+      <a class="nav__cta" href="https://gavelling.com/conferences/oakmun2026" target="_blank" rel="noopener noreferrer" data-magnetic="7">Register <span>↗</span></a>
       <button class="nav__toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="menu" aria-label="Open menu">
         <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
@@ -120,7 +133,34 @@ const introAssets = [
       <a href="#resources"><i class="u-index" aria-hidden="true">04</i>Resources</a>
       <a href="#faq"><i class="u-index" aria-hidden="true">05</i>FAQ</a>
     </nav>
-    <a class="menu__cta btn btn--solid" href="#register">Register <span>↗</span></a>
+    <div class="menu__ctas">
+      <a class="menu__cta btn btn--solid" href="https://gavelling.com/conferences/oakmun2026" target="_blank" rel="noopener noreferrer">Register <span>↗</span></a>
+      <a class="menu__cta btn" href="/staff#delegates">Get Your QR <span>↗</span></a>
+    </div>
+  </div>
+
+  <!-- QR POPUP -->
+  <div class="qr-popup" id="qr-popup" data-qr-popup hidden>
+    <div class="qr-popup__backdrop" data-qr-popup-dismiss></div>
+    <div class="qr-popup__panel" role="dialog" aria-modal="true" aria-labelledby="qr-popup-title" aria-describedby="qr-popup-desc">
+      <button class="qr-popup__close" type="button" data-qr-popup-dismiss aria-label="Close">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+      </button>
+      <div class="qr-popup__art" aria-hidden="true">
+        <span class="qr-popup__corner qr-popup__corner--tl"></span>
+        <span class="qr-popup__corner qr-popup__corner--tr"></span>
+        <span class="qr-popup__corner qr-popup__corner--bl"></span>
+        <span class="qr-popup__corner qr-popup__corner--br"></span>
+        <span class="qr-popup__scan"></span>
+      </div>
+      <p class="qr-popup__eyebrow">Delegate check-in</p>
+      <h2 id="qr-popup-title">Get your own QR</h2>
+      <p id="qr-popup-desc">Register as a delegate and we'll generate a personal QR code for fast check-in at OAKMUN BLR 26.</p>
+      <div class="qr-popup__actions">
+        <a class="btn btn--solid" href="/staff#delegates" data-qr-popup-dismiss>Get your QR <span>→</span></a>
+        <button class="qr-popup__later" type="button" data-qr-popup-dismiss>Maybe later</button>
+      </div>
+    </div>
   </div>
 
   <main class="site" id="main">
@@ -262,16 +302,63 @@ const introAssets = [
       <header class="masthead">
         <span class="u-index" data-reveal="up">03</span>
         <h2 data-split data-reveal="fade">SCHEDULE</h2>
-        <p data-reveal="up" data-reveal-delay="200">{conference.dates.toUpperCase()} · Detailed timetable coming soon</p>
+        <p data-reveal="up" data-reveal-delay="200">{conference.dates.toUpperCase()}</p>
       </header>
-      <div class="undecided" data-scrub="cover" data-reveal="mask-up">
-        <div class="undecided__field" aria-hidden="true">
-          <span class="undecided__grid"></span>
-          <span class="undecided__glow"></span>
-          <img class="undecided__emblem" src="/oakmun-mark.svg" alt="" data-parallax="0.22" />
+
+      <div class="timetable" data-schedule data-reveal="up">
+        <div class="timetable__head">
+          <div class="timetable__tabs" role="tablist" aria-label="Conference day">
+            {scheduleDays.map((day, i) => (
+              <button
+                class={`timetable__tab${i === 0 ? ' is-active' : ''}`}
+                type="button"
+                role="tab"
+                id={`${day.id}-tab`}
+                aria-controls={`${day.id}-panel`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                data-schedule-tab
+              >
+                <span>{day.label}</span>
+                <i>{day.date}</i>
+              </button>
+            ))}
+            <span class="timetable__marker" data-schedule-marker aria-hidden="true"></span>
+          </div>
         </div>
-        <span class="undecided__ghost" aria-hidden="true">26</span>
-        <strong class="undecided__word">COMING<br />SOON</strong>
+
+        <div class="timetable__stage" data-schedule-stage>
+          {scheduleDays.map((day, i) => (
+            <ol
+              class={`timeline${i === 0 ? ' is-active' : ''}`}
+              role="tabpanel"
+              id={`${day.id}-panel`}
+              aria-labelledby={`${day.id}-tab`}
+              hidden={i !== 0}
+              data-schedule-panel
+              data-stagger
+            >
+              {day.items.map((item) => (
+                <li class={`timeline__item timeline__item--${item.kind}${item.headline ? ' timeline__item--headline' : ''}`} data-reveal="up">
+                  <div class="timeline__time">{item.time}{item.end && <> <span class="timeline__time-sep">–</span> {item.end}</>}</div>
+                  <span class="timeline__dot" aria-hidden="true"></span>
+                  <div class="timeline__card">
+                    {item.headline && <span class="timeline__tag">{scheduleKindLabels[item.kind]}</span>}
+                    <h3>{item.title}</h3>
+                    {item.meals && (
+                      <div class="timeline__meals">
+                        {item.meals.map((meal) => (
+                          <div class="timeline__meal"><b>{meal.label}</b><span>{meal.time}</span></div>
+                        ))}
+                      </div>
+                    )}
+                    {item.mark && <i class="timeline__mark" aria-hidden="true">{item.mark}</i>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ))}
+        </div>
       </div>
     </section>
 
@@ -360,12 +447,16 @@ const introAssets = [
     import { initIntro } from '../scripts/intro';
     import { initCountdown } from '../scripts/countdown';
     import { initDepthField } from '../scripts/depthfield';
+    import { initQrPopup } from '../scripts/qrpopup';
+    import { initSchedule } from '../scripts/schedule';
 
     initCountdown(document.querySelector<HTMLElement>('[data-countdown-target]'));
     const intro = document.getElementById('intro');
     initIntro(intro, intro?.dataset.assets?.split(',') ?? []);
     initNav(document.getElementById('nav'));
     initMotion(document);
+    initQrPopup(document.querySelector('[data-qr-popup]'));
+    initSchedule(document.querySelector('[data-schedule]'));
     initDepthField(
       document.querySelector('[data-depth-field]'),
       document.getElementById('top'),

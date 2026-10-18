@@ -1,0 +1,251 @@
+/* SCHEDULE */
+
+.schedule .masthead p { text-transform: none; }
+
+.timetable { position: relative; }
+
+.timetable__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  flex-wrap: wrap;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.timetable__tabs {
+  position: relative;
+  display: flex;
+  flex: 1 1 24rem;
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: .75rem;
+  background: var(--navy-900);
+  overflow: hidden;
+}
+.timetable__tab {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .2rem;
+  padding: .85rem 1.3rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-40);
+  text-align: left;
+  cursor: pointer;
+  transition: color 280ms var(--e-out);
+}
+.timetable__tab span {
+  font-size: var(--t-xxs);
+  font-weight: 800;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+.timetable__tab i {
+  font-style: normal;
+  font-size: .68rem;
+  font-weight: 600;
+  color: inherit;
+  opacity: .75;
+  font-variant-numeric: tabular-nums;
+}
+.timetable__tab:hover:not(.is-active) { color: var(--ink-72); }
+.timetable__tab.is-active { color: var(--navy-900); }
+
+.timetable__marker {
+  position: absolute;
+  z-index: 0;
+  top: .3rem;
+  bottom: .3rem;
+  left: 0;
+  width: 0;
+  border-radius: .55rem;
+  background: var(--teal);
+  box-shadow: 0 0 1.25rem rgb(103 196 223 / .35);
+  transition: transform 460ms var(--e-out), width 460ms var(--e-out);
+}
+
+.timetable__stage { position: relative; overflow: hidden; }
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  opacity: 0;
+  transform: translateY(.9rem);
+  transition: opacity 220ms var(--e-in), transform 240ms var(--e-in);
+}
+.timeline.is-active { opacity: 1; transform: none; transition: opacity 380ms var(--e-out) 20ms, transform 420ms var(--e-out) 20ms; }
+.timeline[hidden] { display: none; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: .2rem;
+  bottom: .2rem;
+  left: calc(7.75rem + .55rem);
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--rule-strong) 6%, var(--rule-strong) 92%, transparent);
+}
+
+.timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 7.75rem 1fr;
+  column-gap: 1.1rem;
+  padding-bottom: clamp(1.1rem, 2.6vw, 1.5rem);
+}
+.timeline__item:last-child { padding-bottom: 0; }
+
+.timeline__time {
+  grid-column: 1;
+  padding-top: .5rem;
+  color: var(--ink-72);
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.timeline__time-sep { color: var(--ink-40); font-weight: 600; }
+
+.timeline__dot {
+  position: absolute;
+  z-index: 2;
+  top: .65rem;
+  left: calc(7.75rem + .55rem);
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+  background: var(--navy-800);
+  border: 2px solid var(--sig-55);
+  transform: translateX(-50%);
+}
+
+/* CARD — committee sessions, ceremonies, meals, socials */
+.timeline__card {
+  position: relative;
+  grid-column: 2;
+  padding: 1.05rem 1.25rem;
+  border: 1px solid var(--rule-soft);
+  border-radius: .75rem;
+  background: var(--navy-800);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.timeline__tag {
+  display: block;
+  margin-bottom: .35rem;
+  color: var(--teal);
+  font-size: var(--t-xxs);
+  font-weight: 800;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+}
+
+.timeline__card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: .92rem;
+  font-weight: 700;
+  letter-spacing: .005em;
+  line-height: 1.35;
+}
+
+.timeline__mark {
+  position: absolute;
+  z-index: -1;
+  right: -.1rem;
+  bottom: -.9rem;
+  color: var(--sig-06);
+  font-size: clamp(3.4rem, 6vw, 4.75rem);
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: .8;
+}
+
+.timeline__meals { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
+.timeline__meal {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  padding: .4rem .7rem;
+  border: 1px solid var(--rule-soft);
+  border-radius: .5rem;
+  background: var(--navy-700);
+}
+.timeline__meal b {
+  color: var(--teal);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.timeline__meal span { color: var(--ink-72); font-size: .72rem; font-variant-numeric: tabular-nums; }
+
+/* HEADLINE — committee sessions & ceremonies */
+.timeline__item--headline .timeline__dot {
+  width: .85rem;
+  height: .85rem;
+  border-color: var(--teal-bright);
+  box-shadow: 0 0 .55rem rgb(55 189 220 / .55);
+}
+.timeline__item--headline .timeline__card {
+  border-left: 2px solid var(--teal);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background: linear-gradient(135deg, rgb(26 96 124 / .16), transparent 65%), var(--navy-800);
+}
+.timeline__item--headline .timeline__card h3 { font-size: clamp(.98rem, 1.4vw, 1.1rem); font-weight: 800; }
+
+/* INLINE — logistics, breaks, dispersal, moving: lightweight, no box */
+.timeline__item--logistics .timeline__card,
+.timeline__item--break .timeline__card,
+.timeline__item--dispersal .timeline__card,
+.timeline__item--venue .timeline__card {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  padding: .5rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.timeline__item--logistics .timeline__card h3,
+.timeline__item--break .timeline__card h3,
+.timeline__item--dispersal .timeline__card h3,
+.timeline__item--venue .timeline__card h3 { color: var(--ink); font-size: .95rem; font-weight: 700; }
+.timeline__item--logistics .timeline__dot,
+.timeline__item--dispersal .timeline__dot,
+.timeline__item--venue .timeline__dot { border-color: var(--ink-22); }
+
+/* SOCIAL — a touch of festivity, kept restrained */
+.timeline__item--social .timeline__dot { border-color: var(--teal-bright); box-shadow: 0 0 .6rem rgb(55 189 220 / .55); }
+.timeline__item--social .timeline__card {
+  border-left: 2px solid var(--teal-bright);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background: linear-gradient(135deg, rgb(166 228 241 / .1), transparent 70%), var(--navy-800);
+}
+.timeline__item--social .timeline__tag { color: var(--teal-pale); }
+.timeline__item--social .timeline__card h3 { font-size: clamp(.98rem, 1.4vw, 1.1rem); font-weight: 800; }
+
+@media (max-width: 640px) {
+  .timeline::before { display: none; }
+  .timeline__item { grid-template-columns: 1fr; row-gap: .4rem; }
+  .timeline__dot { display: none; }
+  .timeline__time { grid-column: 1; text-align: left; padding-top: 0; }
+  .timeline__card { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline { transition: none !important; opacity: 1 !important; transform: none !important; }
+}

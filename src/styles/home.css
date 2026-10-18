@@ -110,6 +110,21 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
 .nav__cta span { transition: transform var(--d-mid) var(--e-out); }
 .nav__cta:hover span { transform: translate(2px, -2px); }
 
+.nav__cta { white-space: nowrap; }
+.nav__cta--qr { border-color: var(--sig-55); color: var(--teal); }
+.nav__cta--qr:hover, .nav__cta--qr:focus-visible { background: var(--teal); border-color: var(--teal); color: var(--navy-900); }
+.qr-icon { width: .85rem; height: .85rem; flex: 0 0 auto; }
+
+/* Between the hamburger breakpoint and a roomy desktop, two full-width
+   pill buttons plus the five nav links don't fit; the QR button drops to
+   an icon so nothing wraps or overlaps. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .nav__links { gap: clamp(1rem, 2vw, 1.5rem); }
+  .nav__cta--qr { padding: .7rem; gap: 0; }
+  .nav__cta--qr .qr-icon { width: 1rem; height: 1rem; }
+  .nav__cta--qr span.qr-icon-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+
 .nav__toggle {
   display: none;
   /* place-CONTENT, not place-items: the rows stretch to fill the 44px button
@@ -178,7 +193,7 @@ body:not(.intro-done) .nav { opacity: 0; pointer-events: none; }
   font-weight: 800;
   letter-spacing: .14em;
 }
-.menu__cta { justify-self: start; }
+.menu__ctas { display: flex; flex-wrap: wrap; gap: .85rem; justify-self: start; }
 
 @media (max-width: 900px) {
   /* Two columns so the toggle lands hard right; .nav--page needs naming too,
