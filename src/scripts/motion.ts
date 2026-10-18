@@ -128,6 +128,11 @@ function initReveals(scope: ParentNode) {
       const el = entry.target as HTMLElement;
       const delay = el.dataset.revealDelay;
       if (delay) el.style.setProperty('--reveal-delay', `${delay}ms`);
+      // Promote to its own layer only for the brief window it's actually animating —
+      // doing this for every [data-reveal] on the page from load (dozens on content-heavy
+      // pages) pins that many composited layers at once and is a real source of jank.
+      el.style.willChange = 'opacity, transform';
+      el.addEventListener('transitionend', () => { el.style.willChange = 'auto'; }, { once: true });
       el.classList.add('is-in');
       io.unobserve(el);
     }
@@ -192,6 +197,23 @@ function initSplit(scope: ParentNode) {
   run();
   document.fonts?.ready.then(() => { run(); measure(); });
   return run;
+}
+
+/* ORBIT RINGS — masthead/badge conic-gradient spinners are expensive to keep
+   compositing; only run them while actually on screen (there can be a dozen+
+   of these across a page). */
+function initOrbitRings(scope: ParentNode) {
+  if (reduceMQ.matches) return;
+  const rings = scope.querySelectorAll<HTMLElement>('.masthead > span:first-child, .u-badge');
+  if (!rings.length) return;
+
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      entry.target.classList.toggle('is-ring-on', entry.isIntersecting);
+    }
+  }, { rootMargin: '100px 0px' });
+
+  rings.forEach((el) => io.observe(el));
 }
 
 /* MAGNETIC ELEMENTS */
@@ -355,6 +377,7 @@ export function initMotion(scope: ParentNode = document) {
 
   const resplit = initSplit(scope);
   initReveals(scope);
+  initOrbitRings(scope);
   initMagnetic(scope);
   initSpotlight(scope);
   initAccordion(scope);

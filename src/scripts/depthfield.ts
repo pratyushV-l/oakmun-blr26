@@ -6,6 +6,15 @@ const TINTS = ['166 228 241', '103 196 223', '244 248 248'];
 const DEPTH = 1600;
 const FOCAL = 420;
 
+// Pre-built rgba() strings per tint × quantized alpha bucket, so the draw loop
+// never allocates a template string per particle per frame (that was real GC
+// pressure at up to ~480 particles × 60fps).
+const ALPHA_STEPS = 48;
+const COLOR_CACHE = TINTS.map((tint) => (
+  Array.from({ length: ALPHA_STEPS + 1 }, (_, i) => `rgb(${tint} / ${(i / ALPHA_STEPS).toFixed(3)})`)
+));
+const colorFor = (tintIndex: number, alpha: number) => COLOR_CACHE[tintIndex][Math.round(alpha * ALPHA_STEPS)];
+
 export function initDepthField(
   canvas: HTMLCanvasElement | null,
   host: HTMLElement | null,
@@ -36,14 +45,14 @@ export function initDepthField(
   });
 
   const resize = () => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const widthChanged = host.clientWidth !== w;
     w = host.clientWidth;
     h = host.clientHeight;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const count = Math.round(Math.min(480, Math.max(160, (w * h) / 2800)));
+    const count = Math.round(Math.min(340, Math.max(140, (w * h) / 3400)));
     // Mobile toolbars change the height constantly; only reseed on width.
     if (widthChanged) motes = Array.from({ length: count }, () => spawn());
     if (reduce.matches) draw(0);
@@ -76,7 +85,7 @@ export function initDepthField(
       const near = 1 - m.z / DEPTH;
       const alpha = Math.min(0.95, 0.08 + near ** 1.5 * 1.1);
       const r = 0.5 + near * 2.1;
-      ctx.strokeStyle = ctx.fillStyle = `rgb(${TINTS[m.tint]} / ${alpha.toFixed(3)})`;
+      ctx.strokeStyle = ctx.fillStyle = colorFor(m.tint, alpha);
 
       // Streak from the previous position once the field speeds up.
       const pk = FOCAL / m.pz;

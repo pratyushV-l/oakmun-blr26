@@ -11,3 +11,5 @@
 @import "./footer.css";
 @import './attendance.css';
 @import './attendance-qr.css';
+@import './qrpopup.css';
+@import './schedule.css';

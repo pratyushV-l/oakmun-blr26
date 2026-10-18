@@ -7,7 +7,6 @@
     opacity var(--reveal-dur) var(--e-out) var(--reveal-delay),
     transform var(--reveal-dur) var(--e-out) var(--reveal-delay),
     filter var(--reveal-dur) var(--e-out) var(--reveal-delay);
-  will-change: opacity, transform;
 }
 
 [data-reveal="up"]     { opacity: 0; transform: translate3d(0, 2.25rem, 0); }
@@ -38,7 +37,6 @@
   transform: none;
   filter: none;
 }
-[data-reveal].is-in { will-change: auto; }
 
 [data-stagger] > * { --reveal-delay: calc(var(--i, 0) * var(--stagger-step, 70ms)); }
 
