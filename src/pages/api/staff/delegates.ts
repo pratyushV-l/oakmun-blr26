@@ -1,13 +1,15 @@
 import type { APIRoute } from 'astro';
-import { json, newQrToken, supabaseAdmin, hashToken } from '../../../lib/attendance';
+import { hashToken, isAdminRequest, json, newQrToken, supabaseAdmin } from '../../../lib/attendance';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
+  if (!isAdminRequest(request)) return json({ error: 'Admin sign-in required.' }, 401);
   const { data, error } = await supabaseAdmin().from('delegates').select('id,name,email,created_at,attendance(conference_day,checked_in_at)').order('created_at', { ascending: false }).limit(500);
   if (error) return json({ error: 'Could not load delegate list.' }, 500);
   return json({ delegates: data });
 };
 
 export const POST: APIRoute = async ({ request }) => {
+  if (!isAdminRequest(request)) return json({ error: 'Admin sign-in required.' }, 401);
   try {
     const { name, email } = await request.json();
     if (typeof name !== 'string' || name.trim().length < 1 || name.trim().length > 120) return json({ error: 'Enter a delegate name (1–120 characters).' }, 400);
@@ -23,4 +25,3 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'The delegate service is not configured yet.' }, 503);
   }
 };
-

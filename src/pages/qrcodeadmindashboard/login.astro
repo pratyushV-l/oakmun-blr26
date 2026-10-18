@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { isAdminRequest } from '../../lib/attendance';
+
+const adminPath = '/qrcodeadmindashboard';
+if (isAdminRequest(Astro.request)) return Astro.redirect(adminPath);
+---
+<Layout title="Staff sign in | OAKMUN BLR 26">
+  <main class="ops-shell">
+    <section class="ops-card ops-login">
+      <a class="ops-brand" href="/"><img src="/oakmun-mark.svg" alt="" /> OAKMUN <span>BLR 26 · STAFF</span></a>
+      <p class="ops-kicker">RESTRICTED ACCESS</p>
+      <h1>Staff sign in</h1>
+      <p class="ops-muted">The delegate roster, QR generation, and attendance scanner are for authorized administrators only.</p>
+      <form id="login-form" class="ops-form">
+        <label>Admin password<input name="password" type="password" autocomplete="current-password" required /></label>
+        <button class="ops-button" type="submit">Sign in <span>→</span></button>
+        <p class="ops-message" id="login-message" role="alert"></p>
+      </form>
+      <p class="ops-footnote"><a class="ops-link" href="/qr">Are you a delegate? Get your QR →</a></p>
+    </section>
+  </main>
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#login-form');
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = form.querySelector<HTMLButtonElement>('button');
+      const message = document.querySelector<HTMLElement>('#login-message');
+      if (button) button.disabled = true;
+      const password = new FormData(form).get('password');
+      const response = await fetch('/api/staff/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password }) });
+      const result = await response.json();
+      if (response.ok) location.href = '/qrcodeadmindashboard';
+      else if (message) message.textContent = result.error ?? 'Could not sign in.';
+      if (button) button.disabled = false;
+    });
+  </script>
+</Layout>

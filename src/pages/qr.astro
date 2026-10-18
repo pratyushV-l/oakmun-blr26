@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Get your QR | OAKMUN BLR 26">
+  <main class="ops-shell">
+    <section class="ops-card ops-login">
+      <a class="ops-brand" href="/"><img src="/oakmun-mark.svg" alt="" /> OAKMUN <span>BLR 26 · DELEGATE</span></a>
+      <p class="ops-kicker">DELEGATE CHECK-IN</p>
+      <h1>Get your QR</h1>
+      <p class="ops-muted">Enter the email address used for your OAKMUN registration. Show this QR code at the registration desk when you arrive.</p>
+      <form id="qr-form" class="ops-form">
+        <label>Email address<input name="email" type="email" autocomplete="email" required /></label>
+        <button class="ops-button" type="submit">Show my QR <span>→</span></button>
+        <p class="ops-message" id="qr-message" role="alert"></p>
+      </form>
+      <section class="ops-qr-panel" id="qr-panel" hidden>
+        <div><p class="ops-kicker">YOUR DELEGATE QR</p><h2 id="qr-name"></h2><p class="ops-muted" id="qr-email"></p><a class="ops-button" id="qr-download" download="oakmun-delegate-qr.png">Download QR <span>↓</span></a></div>
+        <img id="delegate-qr" alt="Your delegate QR code" width="240" height="240" />
+      </section>
+    </section>
+  </main>
+  <script>
+    import QRCode from 'qrcode';
+    const form = document.querySelector<HTMLFormElement>('#qr-form');
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = form.querySelector<HTMLButtonElement>('button');
+      const message = document.querySelector<HTMLElement>('#qr-message');
+      const panel = document.querySelector<HTMLElement>('#qr-panel');
+      if (button) button.disabled = true;
+      const email = new FormData(form).get('email');
+      const response = await fetch('/api/delegates/qr', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email }) });
+      const result = await response.json();
+      if (response.ok) {
+        const dataUrl = await QRCode.toDataURL(`email:${result.delegate.email}`, { width: 480, margin: 2, errorCorrectionLevel: 'H' });
+        document.querySelector<HTMLImageElement>('#delegate-qr')!.src = dataUrl;
+        document.querySelector<HTMLAnchorElement>('#qr-download')!.href = dataUrl;
+        document.querySelector<HTMLElement>('#qr-name')!.textContent = result.delegate.name;
+        document.querySelector<HTMLElement>('#qr-email')!.textContent = result.delegate.email;
+        if (message) message.textContent = '';
+        if (panel) { panel.hidden = false; panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      } else if (message) message.textContent = result.error ?? 'Could not find your QR code.';
+      if (button) button.disabled = false;
+    });
+  </script>
+</Layout>

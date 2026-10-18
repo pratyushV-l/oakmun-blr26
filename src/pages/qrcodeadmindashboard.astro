@@ -1,9 +1,13 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../layouts/Layout.astro';
+import { isAdminRequest } from '../lib/attendance';
+
+const adminPath = '/qrcodeadmindashboard';
+if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
 ---
 <Layout title="Delegates | OAKMUN BLR 26 Staff">
   <main class="ops-shell ops-wide">
-    <header class="ops-header"><a class="ops-brand" href="/"><img src="/oakmun-mark.svg" alt="" /> OAKMUN <span>BLR 26 · CHECK-IN</span></a><nav><a class="is-active" href="#delegates">Delegates</a><a href="#attendance">Attendance scanner</a></nav></header>
+    <header class="ops-header"><a class="ops-brand" href="/"><img src="/oakmun-mark.svg" alt="" /> OAKMUN <span>BLR 26 · CHECK-IN</span></a><nav><a class="is-active" href="#delegates">Delegates</a><a href="#attendance">Attendance scanner</a><button class="ops-link" id="logout" type="button">Sign out</button></nav></header>
     <section class="ops-heading"><p class="ops-kicker">REGISTRATION DESK</p><h1>Delegates</h1><p class="ops-muted">Add delegates and create their QR codes.</p></section>
     <div class="ops-grid">
       <section class="ops-card"><h2>Add delegate</h2><form id="delegate-form" class="ops-form"><label>Full name<input name="name" maxlength="120" required /></label><label>Email address<input name="email" type="email" required /></label><button class="ops-button" type="submit">Save & create QR <span>→</span></button><p class="ops-message" id="delegate-message" role="status"></p></form></section>
@@ -22,7 +26,7 @@ import Layout from '../../layouts/Layout.astro';
     const refresh = async () => {
       const response = await fetch('/api/staff/delegates');
       const result = await response.json();
-      if (!response.ok) { location.href = '/staff'; return; }
+      if (!response.ok) { location.href = `${adminPath}/login`; return; }
       if (count) count.textContent = String(result.delegates.length);
       if (!rows) return;
       rows.replaceChildren();
@@ -61,6 +65,10 @@ import Layout from '../../layouts/Layout.astro';
       if (button) button.disabled = false;
     });
     document.querySelector('#refresh')?.addEventListener('click', refresh);
+    document.querySelector('#logout')?.addEventListener('click', async () => {
+      await fetch('/api/staff/logout', { method: 'POST' });
+      location.href = `${adminPath}/login`;
+    });
     void refresh();
 
     const reader = new BrowserMultiFormatReader();
@@ -113,4 +121,3 @@ import Layout from '../../layouts/Layout.astro';
     window.addEventListener('pagehide', () => controls?.stop());
   </script>
 </Layout>
-
