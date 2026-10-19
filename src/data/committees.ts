@@ -11,6 +11,7 @@ export type Committee = {
   description: string;
   image: string;
   executiveBoard: { name: string; role: string }[];
+  freezeDate?: string;
   confidential?: boolean;
 };
 
@@ -48,9 +49,11 @@ export const committees: Committee[] = [
   },
   {
     id: 'h-unsc', index: 4, code: 'H-UNSC', name: 'Historical United Nations Security Council', category: 'Semi-Crisis', format: 'Double Delegate', size: 40,
-    agenda: 'The Yom Kippur War, 1973: Preventing Regional Escalation and Direct Superpower Confrontation in the Middle East',
-    shortAgenda: 'The Yom Kippur War, 1973',
-    description: 'Set in 1973, the Historical UNSC places delegates at a decisive moment in the Yom Kippur War. In double delegations, they must manage urgent ceasefire diplomacy while preventing regional escalation and a direct superpower confrontation.', image: '/committees/h-unsc.png',
+    agenda: 'The Situation in the Occupied Arab Territories, with Special Reference to the Golan Heights',
+    shortAgenda: 'The Situation in the Occupied Arab Territories',
+    description: 'The Historical UNSC examines the situation in the occupied Arab territories, with special reference to the Golan Heights. Delegates must navigate territorial claims, regional security, international law, and the competing pressures of the Cold War.',
+    image: '/committees/h-unsc.png',
+    freezeDate: '17 December 1981',
     executiveBoard: [
       { name: 'Joel Thomas', role: 'Co-Chair' },
       { name: 'Dhruv Bajaj', role: 'Co-Chair' },
@@ -91,9 +94,11 @@ export const committees: Committee[] = [
   },
   {
     id: 'lok-sabha', index: 8, code: 'LOK SABHA', name: 'Lok Sabha', category: 'Indian Parliament', format: 'Single Delegate', size: 35,
-    agenda: 'Reviewing the Implementation of the National Education Policy, 2020',
-    shortAgenda: 'Reviewing the National Education Policy',
-    description: 'Lok Sabha recreates the lower house of India’s Parliament, where representatives scrutinise policy, debate legislation, and hold the executive to account. Delegates will examine how the National Education Policy has translated from ambition into implementation.', image: '/committees/lok-sabha.png',
+    agenda: 'Reviewing the legality and jurisprudence of the BNSS and ensuring a balance between the right to peaceful protest and public order with a special emphasis on the recent actions in the NCT of Delhi',
+    shortAgenda: 'The BNSS, peaceful protest, and public order',
+    description: 'Lok Sabha recreates the lower house of India’s Parliament, where representatives scrutinise policy, debate legislation, and hold the executive to account. Delegates will examine the legality and jurisprudence of the BNSS while balancing the right to peaceful protest with public order, with special emphasis on recent actions in the NCT of Delhi.',
+    image: '/committees/lok-sabha.png',
+    freezeDate: '16 October · 23:59',
     executiveBoard: [
       { name: 'Shlok Dubey', role: 'Chair' },
       { name: 'Talin Krishna', role: 'Vice-Chair' },
