@@ -48,7 +48,9 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
       const values = new FormData(form);
       const response = await fetch('/api/staff/delegates', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: values.get('name'), email: values.get('email') }) });
       const result = await response.json();
-      if (message) message.textContent = response.ok ? `Added ${result.delegate.name}. The QR code is ready below.` : result.error;
+      if (message) message.textContent = response.ok
+        ? `Added ${result.delegate.name}. The QR code is ready below.${result.syncWarning ? ` ${result.syncWarning}` : ''}`
+        : result.error;
       if (response.ok) {
         const image = document.querySelector<HTMLImageElement>('#delegate-qr');
         const download = document.querySelector<HTMLAnchorElement>('#qr-download');
@@ -95,7 +97,11 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
       const data = await response.json();
       if (response.ok && data.delegate) {
         const already = data.status === 'already_checked_in';
-        showResult(already ? 'Already checked in' : 'Check-in complete', `${data.delegate.name} · ${data.delegate.email} · Day ${day}${data.checkedInAt ? ` · ${new Date(data.checkedInAt).toLocaleTimeString()}` : ''}`, already ? 'ops-result-warn' : 'ops-result-ok');
+        showResult(
+          already ? 'Already checked in' : 'Check-in complete',
+          `${data.delegate.name} · ${data.delegate.email} · Day ${day}${data.checkedInAt ? ` · ${new Date(data.checkedInAt).toLocaleTimeString()}` : ''}${data.syncWarning ? ` · ${data.syncWarning}` : ''}`,
+          already ? 'ops-result-warn' : 'ops-result-ok',
+        );
       } else showResult('QR not accepted', data.error ?? 'Please try again.', 'ops-result-error');
       window.setTimeout(() => { busy = false; }, 1400);
     };

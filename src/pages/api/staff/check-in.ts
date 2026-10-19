@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { hashToken, isAdminRequest, json, supabaseAdmin } from '../../../lib/attendance';
+import { syncToGoogleSheets } from '../../../lib/google-sheets';
 
 export const POST: APIRoute = async ({ request }) => {
   if (!isAdminRequest(request)) return json({ error: 'Admin sign-in required.' }, 401);
@@ -17,7 +18,14 @@ export const POST: APIRoute = async ({ request }) => {
     const { data: checkIn, error } = await db.from('attendance').insert({ delegate_id: delegate.id, conference_day: Number(day), checked_in_by: 'prototype' }).select('checked_in_at').single();
     if (error?.code === '23505') return json({ status: 'already_checked_in', delegate: { name: delegate.name, email: delegate.email } });
     if (error || !checkIn) return json({ error: 'Could not record attendance. Please try again.' }, 500);
-    return json({ status: 'checked_in', delegate: { name: delegate.name, email: delegate.email }, checkedInAt: checkIn.checked_in_at });
+    const sync = await syncToGoogleSheets({
+      action: 'record_attendance',
+      name: delegate.name,
+      email: delegate.email,
+      day: Number(day),
+      checkedInAt: checkIn.checked_in_at,
+    });
+    return json({ status: 'checked_in', delegate: { name: delegate.name, email: delegate.email }, checkedInAt: checkIn.checked_in_at, syncWarning: sync.warning });
   } catch {
     return json({ error: 'The attendance service is not configured yet.' }, 503);
   }
