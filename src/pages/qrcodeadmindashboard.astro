@@ -88,7 +88,11 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
       syncSheets.disabled = true;
       if (listMessage) listMessage.textContent = 'Copying existing delegates to Google Sheets…';
       try {
-        const response = await fetch('/api/staff/sync-sheets', { method: 'POST' });
+        const response = await fetch('/api/staff/sync-sheets', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({}),
+        });
         const result = await response.json();
         if (listMessage) listMessage.textContent = response.ok
           ? `Copied ${result.synced} existing delegate${result.synced === 1 ? '' : 's'} to Google Sheets.`
