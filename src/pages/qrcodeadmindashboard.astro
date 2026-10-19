@@ -14,7 +14,7 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
       <section class="ops-card ops-stats"><p class="ops-kicker">ON THE LIST</p><strong id="delegate-count">—</strong><span>registered delegates</span><a class="ops-button ops-button--secondary" href="#attendance">Open attendance scanner →</a></section>
     </div>
     <section class="ops-card ops-qr-panel" id="qr-panel" hidden><div><p class="ops-kicker">DELEGATE QR CODE</p><h2 id="qr-name">QR code ready</h2><p class="ops-muted" id="qr-email"></p><p class="ops-muted">Download or print this QR and give it to the delegate. Keep a copy for check-in.</p><a class="ops-button" id="qr-download" download="oakmun-delegate-qr.png">Download QR <span>↓</span></a></div><img id="delegate-qr" alt="Delegate QR code" width="240" height="240" /></section>
-    <section class="ops-card ops-list" id="delegates"><div class="ops-list-head"><div><p class="ops-kicker">REGISTRATION ROSTER</p><h2>Recent delegates</h2></div><button id="refresh" class="ops-refresh" type="button">Refresh ↻</button></div><div class="ops-table-wrap"><table><thead><tr><th>Delegate</th><th>Email</th><th>Attendance</th><th>Registered</th></tr></thead><tbody id="delegate-rows"><tr><td colspan="4">Loading…</td></tr></tbody></table></div><p id="list-message" class="ops-message" role="status"></p></section>
+    <section class="ops-card ops-list" id="delegates"><div class="ops-list-head"><div><p class="ops-kicker">REGISTRATION ROSTER</p><h2>Recent delegates</h2></div><div><button id="sync-sheets" class="ops-refresh" type="button">Copy to Sheets</button><button id="refresh" class="ops-refresh" type="button">Refresh ↻</button></div></div><div class="ops-table-wrap"><table><thead><tr><th>Delegate</th><th>Email</th><th>Attendance</th><th>Registered</th><th>Manage</th></tr></thead><tbody id="delegate-rows"><tr><td colspan="5">Loading…</td></tr></tbody></table></div><p id="list-message" class="ops-message" role="status"></p></section>
     <section class="ops-card ops-scanner" id="attendance"><p class="ops-kicker">VOLUNTEER CHECK-IN</p><h2>Attendance scanner</h2><p class="ops-muted">Choose the conference day, then scan the delegate QR.</p><label class="ops-day-label" for="conference-day">Conference day</label><select id="conference-day"><option value="1">Day 1</option><option value="2">Day 2</option><option value="3">Day 3</option></select><div class="ops-camera"><video id="camera" muted playsinline></video><div class="ops-camera-empty" id="camera-empty"><span>▦</span><p>Camera preview will appear here</p></div></div><div class="ops-actions"><button class="ops-button" id="start-camera" type="button">Start camera <span>→</span></button><button class="ops-button ops-button--secondary" id="stop-camera" type="button" disabled>Stop camera</button><label class="ops-upload">Scan an image<input id="qr-file" type="file" accept="image/*" /></label></div><p class="ops-message" id="camera-message" role="status">Camera access is needed for live scanning.</p><div class="ops-result" aria-live="polite" id="scan-result"><h2>Ready when you are</h2><p class="ops-muted">Duplicate scans are prevented for each day.</p></div></section>
   </main>
   <script>
@@ -23,6 +23,7 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
     const rows = document.querySelector<HTMLTableSectionElement>('#delegate-rows');
     const count = document.querySelector<HTMLElement>('#delegate-count');
     const listMessage = document.querySelector<HTMLElement>('#list-message');
+    const syncSheets = document.querySelector<HTMLButtonElement>('#sync-sheets');
     const refresh = async () => {
       const response = await fetch('/api/staff/delegates');
       const result = await response.json();
@@ -35,9 +36,25 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
         const present = new Set((delegate.attendance ?? []).map((entry: { conference_day: number }) => entry.conference_day));
         const cells = [delegate.name, delegate.email, `Day 1 ${present.has(1) ? '✓' : '·'}   Day 2 ${present.has(2) ? '✓' : '·'}   Day 3 ${present.has(3) ? '✓' : '·'}`, new Date(delegate.created_at).toLocaleDateString()];
         for (const value of cells) { const td = document.createElement('td'); td.textContent = value; tr.append(td); }
+        const manage = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'ops-refresh';
+        deleteButton.type = 'button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', async () => {
+          if (!confirm(`Delete ${delegate.name}? This also removes their attendance records.`)) return;
+          deleteButton.disabled = true;
+          const response = await fetch('/api/staff/delegates', { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: delegate.id }) });
+          const result = await response.json();
+          if (listMessage) listMessage.textContent = response.ok ? `Deleted ${delegate.name}.${result.syncWarning ? ` ${result.syncWarning}` : ''}` : result.error;
+          if (response.ok) await refresh();
+          else deleteButton.disabled = false;
+        });
+        manage.append(deleteButton);
+        tr.append(manage);
         rows.append(tr);
       }
-      if (!result.delegates.length) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 4; td.textContent = 'No delegates added yet.'; tr.append(td); rows.append(tr); }
+      if (!result.delegates.length) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 5; td.textContent = 'No delegates added yet.'; tr.append(td); rows.append(tr); }
     };
     const form = document.querySelector<HTMLFormElement>('#delegate-form');
     form?.addEventListener('submit', async (event) => {
@@ -67,6 +84,14 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
       if (button) button.disabled = false;
     });
     document.querySelector('#refresh')?.addEventListener('click', refresh);
+    syncSheets?.addEventListener('click', async () => {
+      syncSheets.disabled = true;
+      if (listMessage) listMessage.textContent = 'Copying existing delegates to Google Sheets…';
+      const response = await fetch('/api/staff/sync-sheets', { method: 'POST' });
+      const result = await response.json();
+      if (listMessage) listMessage.textContent = response.ok ? `Copied ${result.synced} existing delegate${result.synced === 1 ? '' : 's'} to Google Sheets.` : result.error;
+      syncSheets.disabled = false;
+    });
     document.querySelector('#logout')?.addEventListener('click', async () => {
       await fetch('/api/staff/logout', { method: 'POST' });
       location.href = `${adminPath}/login`;

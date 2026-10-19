@@ -35,6 +35,11 @@ function doPost(event) {
   if (body.action === 'upsert_delegate') {
     if (row === -1) sheet.appendRow([body.name, body.email, '', '', '', new Date()]);
     else sheet.getRange(row, 1, 1, 2).setValues([[body.name, body.email]]);
+  } else if (body.action === 'delete_delegate') {
+    const rows = sheet.getDataRange().getValues();
+    for (let index = rows.length - 1; index >= 1; index -= 1) {
+      if (String(rows[index][1]).toLowerCase() === String(body.email).toLowerCase()) sheet.deleteRow(index + 1);
+    }
   } else if (body.action === 'record_attendance') {
     if (row === -1) sheet.appendRow([body.name, body.email, '', '', '', new Date()]);
     const targetRow = row === -1 ? sheet.getLastRow() : row;

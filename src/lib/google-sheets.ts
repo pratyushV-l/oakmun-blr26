@@ -4,7 +4,7 @@ type SheetSyncResult = {
 };
 
 type SheetPayload = {
-  action: 'upsert_delegate' | 'record_attendance';
+  action: 'upsert_delegate' | 'record_attendance' | 'delete_delegate';
   name: string;
   email: string;
   day?: number;

@@ -27,3 +27,20 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'The delegate service is not configured yet.' }, 503);
   }
 };
+
+export const DELETE: APIRoute = async ({ request }) => {
+  if (!isAdminRequest(request)) return json({ error: 'Admin sign-in required.' }, 401);
+  try {
+    const { id } = await request.json();
+    if (typeof id !== 'string' || !id) return json({ error: 'A delegate id is required.' }, 400);
+    const db = supabaseAdmin();
+    const { data: delegate, error: lookupError } = await db.from('delegates').select('id,name,email').eq('id', id).maybeSingle();
+    if (lookupError || !delegate) return json({ error: 'Delegate not found.' }, 404);
+    const { error } = await db.from('delegates').delete().eq('id', id);
+    if (error) return json({ error: 'Could not delete this delegate.' }, 500);
+    const sync = await syncToGoogleSheets({ action: 'delete_delegate', name: delegate.name, email: delegate.email });
+    return json({ ok: true, syncWarning: sync.warning });
+  } catch {
+    return json({ error: 'Could not delete this delegate.' }, 500);
+  }
+};
