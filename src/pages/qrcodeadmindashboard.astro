@@ -87,9 +87,15 @@ if (!isAdminRequest(Astro.request)) return Astro.redirect(`${adminPath}/login`);
     syncSheets?.addEventListener('click', async () => {
       syncSheets.disabled = true;
       if (listMessage) listMessage.textContent = 'Copying existing delegates to Google Sheets…';
-      const response = await fetch('/api/staff/sync-sheets', { method: 'POST' });
-      const result = await response.json();
-      if (listMessage) listMessage.textContent = response.ok ? `Copied ${result.synced} existing delegate${result.synced === 1 ? '' : 's'} to Google Sheets.` : result.error;
+      try {
+        const response = await fetch('/api/staff/sync-sheets', { method: 'POST' });
+        const result = await response.json();
+        if (listMessage) listMessage.textContent = response.ok
+          ? `Copied ${result.synced} existing delegate${result.synced === 1 ? '' : 's'} to Google Sheets.`
+          : result.error ?? 'Could not copy delegates to Google Sheets.';
+      } catch {
+        if (listMessage) listMessage.textContent = 'The Sheets sync request failed. Please try again.';
+      }
       syncSheets.disabled = false;
     });
     document.querySelector('#logout')?.addEventListener('click', async () => {

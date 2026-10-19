@@ -26,15 +26,21 @@ export async function syncToGoogleSheets(payload: SheetPayload): Promise<SheetSy
   }
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
     const response = await fetch(config.url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ ...payload, secret: config.secret }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     if (!response.ok) return { ok: false, warning: `Google Sheets sync failed with status ${response.status}.` };
+    const result = await response.json() as { ok?: boolean; error?: string };
+    if (!result.ok) return { ok: false, warning: `Google Sheets sync was rejected${result.error ? `: ${result.error}` : '.'}` };
     return { ok: true };
   } catch (error) {
     console.error('Google Sheets sync failed.', error);
-    return { ok: false, warning: 'Google Sheets sync could not be reached.' };
+    return { ok: false, warning: error instanceof DOMException && error.name === 'AbortError' ? 'Google Sheets sync timed out after 15 seconds.' : 'Google Sheets sync could not be reached.' };
   }
 }
