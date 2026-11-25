@@ -148,9 +148,24 @@ const facts = isRestricted
           <p class="cm-agenda__text" data-reveal="up" data-reveal-delay="160">
             {isRestricted ? 'Details will be disclosed at the appropriate time.' : committee.agenda}
           </p>
-          <span class="cm-agenda__status" data-reveal="up" data-reveal-delay="240">
-            {committee.freezeDate ? `Freeze date · ${committee.freezeDate}` : 'Background guide · Coming soon'}
-          </span>
+          {committee.backgroundGuide ? (
+            <a class="cm-agenda__status" href={committee.backgroundGuide} data-reveal="up" data-reveal-delay="240">
+              Background guide · Download PDF
+            </a>
+          ) : committee.freezeDate ? (
+            <span class="cm-agenda__status" data-reveal="up" data-reveal-delay="240">
+              Freeze date · {committee.freezeDate}
+            </span>
+          ) : (
+            <span class="cm-agenda__status" data-reveal="up" data-reveal-delay="240">
+              Background guide · Coming soon
+            </span>
+          )}
+          {committee.backgroundGuide && committee.freezeDate && (
+            <span class="cm-agenda__status" data-reveal="up" data-reveal-delay="240">
+              Freeze date · {committee.freezeDate}
+            </span>
+          )}
         </div>
       </section>
 

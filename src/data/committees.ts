@@ -10,6 +10,7 @@ export type Committee = {
   shortAgenda: string;
   description: string;
   image: string;
+  backgroundGuide?: string;
   executiveBoard: { name: string; role: string }[];
   freezeDate?: string;
   confidential?: boolean;
@@ -28,6 +29,7 @@ export const committees: Committee[] = [
     agenda: 'The Principle of Self-Defence under Article 51 of the United Nations Charter',
     shortAgenda: 'The Principle of Self-Defence',
     description: 'The United Nations General Assembly is the UN’s principal deliberative body, bringing every Member State into the same room. This committee asks delegates to navigate the legal, political, and humanitarian limits of self-defence under the UN Charter.', image: '/committees/unga.png',
+    backgroundGuide: '/guides/unga-background-guide.pdf',
     executiveBoard: [
       { name: 'Aditya Kannan', role: 'Head Chair' },
       { name: 'Rohan Shankar', role: 'Vice Chair' },
@@ -40,6 +42,7 @@ export const committees: Committee[] = [
     agenda: 'The Protection of Refugees and Asylum Seekers amid Rising Border Restrictions and the Principle of Non-Refoulement',
     shortAgenda: 'The Protection of Refugees and Asylum Seekers',
     description: 'UNHRC examines the protection of refugees and asylum seekers amid rising border restrictions. Delegates will consider state obligations, access to asylum, and the principle of non-refoulement.', image: '/committees/unhrc.png',
+    backgroundGuide: '/guides/unhrc-background-guide.pdf',
     executiveBoard: [
       { name: 'Udeern Srihari', role: 'Co Chair' },
       { name: 'Arul S.', role: 'Co Chair' },
@@ -53,6 +56,7 @@ export const committees: Committee[] = [
     shortAgenda: 'The Situation in the Occupied Arab Territories',
     description: 'The Historical UNSC examines the situation in the occupied Arab territories, with special reference to the Golan Heights. Delegates must navigate territorial claims, regional security, international law, and the competing pressures of the Cold War.',
     image: '/committees/h-unsc.png',
+    backgroundGuide: '/guides/h-unsc-background-guide.pdf',
     freezeDate: '17 December 1981',
     executiveBoard: [
       { name: 'Joel Thomas', role: 'Co chairperson' },
@@ -65,6 +69,7 @@ export const committees: Committee[] = [
     agenda: 'Regulation of Anti- Satellite Weapons in light of the Outer Space Treaty (OST) of 1967',
     shortAgenda: 'Regulating Anti-Satellite Weapons',
     description: 'DISEC is the First Committee of the General Assembly, focused on disarmament and international security. Delegates will confront the growing military use of outer space and explore safeguards for security, verification, and peaceful access.', image: '/committees/disec.png',
+    backgroundGuide: '/guides/disec-background-guide.pdf',
     executiveBoard: [
       { name: 'Kavin Sharaf', role: 'Co Chairperson' },
       { name: 'Adeeb', role: 'Co Chairperson' },
@@ -76,6 +81,7 @@ export const committees: Committee[] = [
     agenda: 'Strengthening international measures to prevent the misuse of shell companies and opaque beneficial-ownership structures by non-state actors for terrorist financing and other financial maleficent.',
     shortAgenda: 'Preventing the Misuse of Shell Companies for Terrorist Financing',
     description: 'Delegates will examine how non-state actors misuse shell companies and opaque beneficial-ownership structures for terrorist financing and other financial crime, and consider stronger international measures to address these risks.', image: '/committees/fatf.png',
+    backgroundGuide: '/guides/fatf-background-guide.pdf',
     executiveBoard: [
       { name: 'Snehin Banerjee', role: 'Co Chairperson' },
       { name: 'Yug Singh', role: 'Co chairperson' },
@@ -87,6 +93,7 @@ export const committees: Committee[] = [
     agenda: 'Operation Shadow Storm: Dismantling the Global Scam-Centre Network',
     shortAgenda: 'Operation Shadow Storm',
     description: 'INTERPOL enables law-enforcement cooperation across national borders. Delegates will coordinate an international response to transnational scam-centre networks, weighing intelligence sharing, victim protection, sovereignty, and criminal accountability.', image: '/committees/interpol.png',
+    backgroundGuide: '/guides/interpol-background-guide.pdf',
     executiveBoard: [
       { name: 'Sourav Satish', role: 'Co chair' },
       { name: 'Suban Sudhakar', role: 'Co chair' },
@@ -99,6 +106,7 @@ export const committees: Committee[] = [
     shortAgenda: 'The BNSS, peaceful protest, and public order',
     description: 'Lok Sabha recreates the lower house of India’s Parliament, where representatives scrutinise policy, debate legislation, and hold the executive to account. Delegates will examine the legality and jurisprudence of the BNSS while balancing the right to peaceful protest with public order, with special emphasis on recent actions in the NCT of Delhi.',
     image: '/committees/lok-sabha.png',
+    backgroundGuide: '/guides/lok-sabha-background-guide.pdf',
     freezeDate: '16 October · 11:59',
     executiveBoard: [
       { name: 'Shlok Dubey', role: 'Head Chair' },
@@ -110,6 +118,7 @@ export const committees: Committee[] = [
     agenda: 'Press Freedom and the Protection of Journalists in Armed Conflict Zones',
     shortAgenda: 'Press Freedom in Conflict Zones',
     description: 'The International Press Corps follows the conference from the perspective of journalists, not diplomats. Delegates will report, investigate, and shape public understanding of press freedom and the risks faced by reporters in armed conflict zones.', image: '/committees/ipc.png',
+    backgroundGuide: '/guides/ipc-background-guide.pdf',
     executiveBoard: [
       { name: 'Natasha Agarwal', role: 'International Head of press' },
       { name: 'Daivik', role: 'AHOP' },
@@ -121,16 +130,18 @@ export const committees: Committee[] = [
     agenda: 'Caesar Crosses the Rubicon: The Final Struggle for the Roman Republic',
     shortAgenda: 'Caesar Crosses the Rubicon',
     description: 'Alea Iacta Est is a Joint Crisis Committee set at the moment Julius Caesar crosses the Rubicon. Delegates enter a fast-moving historical crisis where alliances, military decisions, and political legitimacy will determine the future of the Roman Republic.', image: '/committees/jcc-rubicon.png',
+    backgroundGuide: '/guides/alea-iacta-est-background-guide.pdf',
     executiveBoard: [
       { name: 'Sai Juhith', role: 'Head of Cabinet 1' },
       { name: 'Dyutit Vivek', role: 'Vice of Cabinet 1' },
-      { name: 'Ansh Datta', role: 'Head of Cabinet 2' },
+      { name: 'Ansh Dutta', role: 'Head of Cabinet 2' },
       { name: 'Utkarsh', role: 'Vice of Cabinet 2' },
     ],
   },
   {
     id: 'committee-x', index: 11, code: 'COMMITTEE X', name: 'Committee X', category: '', format: '', size: 0,
     agenda: '', shortAgenda: '', description: 'This committee remains classified. Details will be disclosed at the appropriate time.', image: '/committees/committee-x.png',
+    backgroundGuide: '/guides/committee-x-background-guide.pdf',
     executiveBoard: [
       { name: 'Ashwin Thomas', role: 'Head Chair' },
       { name: 'Parthiv Dileep', role: 'Vice Chair' },
@@ -143,6 +154,7 @@ export const committees: Committee[] = [
     agenda: 'U.S. Policy toward Greenland: Arctic Security, Greenlandic Self-Determination, and the Future of U.S.-Danish Relations',
     shortAgenda: 'U.S. Policy toward Greenland',
     description: 'The United States Senate examines national policy through legislation, oversight, and debate. Delegates will consider the strategic, diplomatic, and self-determination questions surrounding Greenland in an increasingly consequential Arctic region.', image: '/committees/us-senate.png',
+    backgroundGuide: '/guides/us-senate-background-guide.pdf',
     executiveBoard: [
       { name: 'Pranav Sivakumar', role: 'Head chairperson' },
       { name: 'Soumyajit Sur Roy', role: 'Vice Chair' },
