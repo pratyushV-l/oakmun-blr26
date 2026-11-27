@@ -20,17 +20,13 @@ export function getStaticPaths() {
 const { committee, prev, next } = Astro.props as { committee: Committee; prev: Committee; next: Committee };
 const isRestricted = Boolean(committee.confidential);
 const committeeTitle = isRestricted ? 'Committee X' : committee.name;
-const overview = isRestricted
-  ? 'The particulars of this committee will be disclosed at the appropriate time.'
-  : committee.description;
+const overview = committee.description;
 
-const facts = isRestricted
-  ? [{ label: 'Status', value: 'Classified' }]
-  : [
-      { label: 'Delegates', value: String(committee.size) },
-      { label: 'Format', value: committee.format },
-      { label: 'Category', value: committee.category },
-    ];
+const facts = [
+  { label: 'Delegates', value: String(committee.size) },
+  { label: 'Format', value: committee.format },
+  { label: 'Category', value: committee.category },
+];
 ---
 
 <Layout title={`${committeeTitle} | Committees | OAKMUN BLR 26`}>
@@ -96,7 +92,7 @@ const facts = isRestricted
       </section>
 
       <!-- FACTS -->
-      {facts.length > 1 ? (
+      {!isRestricted && facts.length > 1 ? (
         <section
           class="cm-facts cm-facts--sequence"
           aria-label="Committee details"
@@ -115,7 +111,7 @@ const facts = isRestricted
             </div>
           </div>
         </section>
-      ) : (
+      ) : !isRestricted ? (
         <section class="cm-facts" aria-label="Committee details">
           {facts.map((fact) => (
             <div class="cm-fact" data-reveal="up">
@@ -137,7 +133,7 @@ const facts = isRestricted
       </section>
 
       <!-- AGENDA -->
-      <section class="cm-agenda" id="agenda" data-scrub="cover">
+      {!isRestricted && <section class="cm-agenda" id="agenda" data-scrub="cover">
         <div class="cm-agenda__plate" aria-hidden="true">
           <img src={committee.image} alt="" loading="lazy" />
           <span class="cm-agenda__wash"></span>
@@ -146,7 +142,7 @@ const facts = isRestricted
           <span class="u-index u-badge" data-reveal="up">02</span>
           <h2 data-split data-reveal="fade">Agenda</h2>
           <p class="cm-agenda__text" data-reveal="up" data-reveal-delay="160">
-            {isRestricted ? 'Details will be disclosed at the appropriate time.' : committee.agenda}
+            {committee.agenda}
           </p>
           {committee.backgroundGuide ? (
             <a class="cm-agenda__status" href={committee.backgroundGuide} data-reveal="up" data-reveal-delay="240">
@@ -167,7 +163,7 @@ const facts = isRestricted
             </span>
           )}
         </div>
-      </section>
+      </section>}
 
       <!-- EXECUTIVE BOARD -->
       <section class="cm-board" aria-labelledby="eb-title">
